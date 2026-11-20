@@ -291,3 +291,59 @@
     max-width: 100%;
   }
 }
+
+/* Material React Table - preserve the existing navy/cyan admin theme */
+.admin-mrt-paper {
+  background: var(--navy-light) !important;
+  color: var(--white) !important;
+}
+
+.admin-mrt-paper .MuiTableContainer-root {
+  background: var(--navy-light);
+}
+
+.admin-mrt-paper .MuiTableCell-root {
+  border-color: rgba(165, 186, 200, 0.15);
+}
+
+.admin-mrt-paper .MuiTableSortLabel-root,
+.admin-mrt-paper .MuiIconButton-root,
+.admin-mrt-paper .MuiSvgIcon-root {
+  color: var(--cyan);
+}
+
+.admin-mrt-paper .MuiInputBase-root,
+.admin-mrt-paper .MuiInputBase-input,
+.admin-mrt-paper .MuiTablePagination-root,
+.admin-mrt-paper .MuiTablePagination-selectLabel,
+.admin-mrt-paper .MuiTablePagination-displayedRows {
+  color: var(--white);
+}
+
+.admin-mrt-paper .MuiFormLabel-root,
+.admin-mrt-paper .MuiInputLabel-root {
+  color: var(--muted);
+}
+
+.admin-mrt-paper .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(165, 186, 200, 0.3);
+}
+
+.admin-mrt-paper .MuiTableBody-root .MuiTableRow-root:hover .MuiTableCell-root {
+  background-color: var(--teal);
+  color: var(--white);
+}
+
+@media (max-width: 767px) {
+  .admin-mrt-paper {
+    overflow-x: auto;
+  }
+}
+.admin-attendance-status.unknown {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}

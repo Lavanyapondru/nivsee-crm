@@ -167,11 +167,20 @@
       "date": "2026-11-20",
       "checkIn": 1795153677284,
       "checkInTime": "11:17 AM",
-      "checkOut": null,
-      "checkOutTime": null,
+      "checkOut": 1795177167268,
+      "checkOutTime": "05:49 PM",
       "breaks": [],
-      "report": null,
-      "reportSubmitted": false,
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795177162719,
+        "submittedTime": "05:49 PM"
+      },
+      "reportSubmitted": true,
       "id": "SR-jNDwthnM"
     },
     {
@@ -181,11 +190,20 @@
       "date": "2026-11-20",
       "checkIn": 1795153702666,
       "checkInTime": "11:18 AM",
-      "checkOut": null,
-      "checkOutTime": null,
+      "checkOut": 1795177369800,
+      "checkOutTime": "05:52 PM",
       "breaks": [],
-      "report": null,
-      "reportSubmitted": false,
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795177363473,
+        "submittedTime": "05:52 PM"
+      },
+      "reportSubmitted": true,
       "id": "dWeTdmXGbSY"
     }
   ],

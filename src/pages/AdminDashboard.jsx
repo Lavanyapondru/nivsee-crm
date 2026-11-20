@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MaterialReactTable } from "material-react-table";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import "./AdminDashboard.css";
@@ -89,8 +90,16 @@ const getWorkedDuration = (record, isToday = false) => {
 
 const getAttendanceStatus = (record) => {
   if (!record) return "Not Checked In";
-  if (record.checkOut) return "Completed";
-  return "Working";
+
+  if (record.checkIn && !record.checkOut) {
+    return "Unknown";
+  }
+
+  if (record.checkOut) {
+    return "Completed";
+  }
+
+  return "Not Checked In";
 };
 
 function AdminDashboard() {
@@ -600,61 +609,116 @@ const [form, setForm] = useState({
                     No employees found. Click Add Employee to create your first record.
                   </p>
                 ) : (
-                  <div className="table-responsive">
-                    <table className="table admin-table align-middle">
-                      <thead className="table-light">
-                        <tr>
-                          <th>Employee ID</th>
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Phone</th>
-                          <th>Department</th>
-                          <th>Designation</th>
-                          <th>Status</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {employees.map((employee) => (
-                          <tr key={employee.id}>
-                            <td>{employee.id}</td>
-                            <td>{employee.name}</td>
-                            <td>{employee.email}</td>
-                            <td>{employee.phone}</td>
-                            <td>{employee.department}</td>
-                            <td>{employee.designation}</td>
-                            <td>
-                             <span
-                                  className={
-                                 employee.status === "active"
-                                  ? "admin-status-active"
-                              : "admin-status-inactive"
-                                }
->
-                            {employee.status}
-                             </span>
-                            </td>
-                            <td>
-                          <button
-                           type="button"
-                           className={`btn btn-sm ${
-                           employee.status === "active"
-                           ? "btn-danger"
-                           : "btn-success"
-                           }`}
-                           onClick={() => handleToggleEmployeeStatus(employee)}
-                          >
-                      {employee.status === "active"
-                      ? "Deactivate"
-                      : "Activate"}
-                         </button>
-                         </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <MaterialReactTable
+                    columns={[
+                      { accessorKey: "id", header: "Employee ID" },
+                      { accessorKey: "name", header: "Name" },
+                      { accessorKey: "email", header: "Email" },
+                      { accessorKey: "phone", header: "Phone" },
+                      { accessorKey: "department", header: "Department" },
+                      { accessorKey: "designation", header: "Designation" },
+                      {
+                        accessorKey: "status",
+                        header: "Status",
+                        Cell: ({ cell }) => {
+                          const status = cell.getValue();
+                          return (
+                           <span
+        className={`admin-attendance-status ${status
+          .toLowerCase()
+          .replace(/\s+/g, "-")}`}
+      >
+        {status}
+      </span>
+                          );
+                        }
+                      },
+                      {
+                        id: "action",
+                        header: "Action",
+                        enableSorting: false,
+                        enableColumnFilter: false,
+                        Cell: ({ row }) => {
+                          const employee = row.original;
+                          return (
+                            <button
+                              type="button"
+                              className={`btn btn-sm ${employee.status === "active" ? "btn-danger" : "btn-success"}`}
+                              onClick={() => handleToggleEmployeeStatus(employee)}
+                            >
+                              {employee.status === "active" ? "Deactivate" : "Activate"}
+                            </button>
+                          );
+                        }
+                      }
+                    ]}
+                    data={employees}
+                    enableSorting
+                    enableColumnFilters
+                    enablePagination
+                    enableGlobalFilter
+                    initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
+                    muiTablePaperProps={{
+                      className: "admin-mrt-paper",
+                      sx: {
+                        backgroundColor: "var(--navy-light)",
+                        color: "var(--white)",
+                        border: "1px solid rgba(89, 242, 254, 0.15)",
+                        borderRadius: "12px",
+                        boxShadow: "none",
+                        overflow: "hidden"
+                      }
+                    }}
+                    muiTopToolbarProps={{
+                      sx: {
+                        backgroundColor: "var(--navy-light)",
+                        color: "var(--white)",
+                        "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+                        "& .MuiInputBase-root": { color: "var(--white)" },
+                        "& .MuiFormLabel-root": { color: "var(--muted)" }
+                      }
+                    }}
+                    muiBottomToolbarProps={{
+                      sx: {
+                        backgroundColor: "var(--navy-light)",
+                        color: "var(--white)",
+                        "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+                        "& .MuiTablePagination-root, & .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { color: "var(--white)" },
+                        "& .MuiSelect-icon": { color: "var(--cyan)" }
+                      }
+                    }}
+                    muiTableHeadCellProps={{
+                      sx: {
+                        backgroundColor: "var(--navy)",
+                        color: "var(--cyan)",
+                        borderBottom: "1px solid var(--teal)",
+                        fontWeight: 700,
+                        whiteSpace: "nowrap"
+                      }
+                    }}
+                    muiTableBodyCellProps={{
+                      sx: {
+                        backgroundColor: "var(--navy-light)",
+                        color: "var(--white)",
+                        borderBottom: "1px solid rgba(165, 186, 200, 0.15)",
+                        whiteSpace: "nowrap"
+                      }
+                    }}
+                    muiTableBodyRowProps={{
+                      sx: {
+                        "&:hover td": {
+                          backgroundColor: "var(--teal)",
+                          color: "var(--white)"
+                        }
+                      }
+                    }}
+                    muiSearchTextFieldProps={{
+                      sx: {
+                        "& .MuiInputBase-root": { color: "var(--white)" },
+                        "& .MuiInputLabel-root": { color: "var(--muted)" }
+                      }
+                    }}
+                  />
                 )}
 
               </div>
@@ -793,52 +857,103 @@ const [form, setForm] = useState({
                   ) : attendanceError ? (
                     <div className="alert alert-danger mb-0">{attendanceError}</div>
                   ) : (
-                    <div className="table-responsive">
-                      <table className="table admin-table table-hover align-middle">
-                        <thead>
-                          <tr>
-                            <th>Employee ID</th>
-                            <th>Employee Name</th>
-                            <th>Department</th>
-                            <th>Check-in</th>
-                            <th>Check-out</th>
-                            <th>Working Hours</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {todayRows.length === 0 ? (
-                            <tr>
-                              <td colSpan="7" className="text-center py-4">
-                                No employees match your search.
-                              </td>
-                            </tr>
-                          ) : todayRows.map(({ employee, record }) => {
-                            const companyId = employee.employeeDetails?.employeeId || employee.employeeId || employee.id;
-                            const status = getAttendanceStatus(record);
-
+                    <MaterialReactTable
+                      columns={[
+                        { accessorKey: "employeeId", header: "Employee ID" },
+                        { accessorKey: "employeeName", header: "Employee Name" },
+                        { accessorKey: "department", header: "Department" },
+                        { accessorKey: "checkIn", header: "Check-in" },
+                        { accessorKey: "checkOut", header: "Check-out" },
+                        { accessorKey: "workingHours", header: "Working Hours" },
+                        {
+                          accessorKey: "status",
+                          header: "Status",
+                          Cell: ({ cell }) => {
+                            const status = cell.getValue();
                             return (
-                              <tr key={employee.id}>
-                                <td>{companyId}</td>
-                                <td>{employee.name || record?.employeeName || "--"}</td>
-                                <td>{employee.department || "--"}</td>
-                                <td>{record ? formatAttendanceTime(record.checkIn, record.checkInTime) : "--"}</td>
-                                <td>{record ? formatAttendanceTime(record.checkOut, record.checkOutTime) : "--"}</td>
-                                <td>{record ? getWorkedDuration(record, true) : "--"}</td>
-                                <td>
-                                  <span className={`admin-attendance-status ${
-                                    status === "Working" ? "is-working" :
-                                    status === "Completed" ? "is-completed" : "is-absent"
-                                  }`}>
-                                    {status}
-                                  </span>
-                                </td>
-                              </tr>
+                              <span className={`admin-attendance-status ${
+                                status === "Working" ? "is-working" :
+                                status === "Completed" ? "is-completed" : "is-absent"
+                              }`}>
+                                {status}
+                              </span>
                             );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                          }
+                        }
+                      ]}
+                      data={todayRows.map(({ employee, record }) => ({
+                        id: employee.id,
+                        employeeId: employee.employeeDetails?.employeeId || employee.employeeId || employee.id,
+                        employeeName: employee.name || record?.employeeName || "--",
+                        department: employee.department || "--",
+                        checkIn: record ? formatAttendanceTime(record.checkIn, record.checkInTime) : "--",
+                        checkOut: record ? formatAttendanceTime(record.checkOut, record.checkOutTime) : "--",
+                        workingHours: record ? getWorkedDuration(record, true) : "--",
+                        status: getAttendanceStatus(record)
+                      }))}
+                      getRowId={(row) => String(row.id)}
+                      enableSorting
+                      enableColumnFilters
+                      enablePagination
+                      enableGlobalFilter={false}
+                      initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
+                      muiTablePaperProps={{
+                        className: "admin-mrt-paper",
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          border: "1px solid rgba(89, 242, 254, 0.15)",
+                          borderRadius: "12px",
+                          boxShadow: "none",
+                          overflow: "hidden"
+                        }
+                      }}
+                      muiTopToolbarProps={{
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+                          "& .MuiInputBase-root": { color: "var(--white)" },
+                          "& .MuiFormLabel-root": { color: "var(--muted)" }
+                        }
+                      }}
+                      muiBottomToolbarProps={{
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+                          "& .MuiTablePagination-root, & .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { color: "var(--white)" },
+                          "& .MuiSelect-icon": { color: "var(--cyan)" }
+                        }
+                      }}
+                      muiTableHeadCellProps={{
+                        sx: {
+                          backgroundColor: "var(--navy)",
+                          color: "var(--cyan)",
+                          borderBottom: "1px solid var(--teal)",
+                          fontWeight: 700,
+                          fontSize: "12px",
+                          whiteSpace: "nowrap"
+                        }
+                      }}
+                      muiTableBodyCellProps={{
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          borderBottom: "1px solid rgba(165, 186, 200, 0.15)",
+                          fontSize: "13px",
+                          whiteSpace: "nowrap"
+                        }
+                      }}
+                      muiTableBodyRowProps={{
+                        sx: {
+                          "&:hover td": {
+                            backgroundColor: "var(--teal)",
+                            color: "var(--white)"
+                          }
+                        }
+                      }}
+                    />
                   )}
                 </div>
 
@@ -870,60 +985,126 @@ const [form, setForm] = useState({
                   ) : attendanceError ? (
                     <p className="admin-muted mb-0">History is unavailable until attendance data loads.</p>
                   ) : (
-                    <div className="table-responsive">
-                      <table className="table admin-table table-hover align-middle">
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>Employee ID</th>
-                            <th>Employee Name</th>
-                            <th>Check-in</th>
-                            <th>Check-out</th>
-                            <th>Working Hours</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {previousRecords.length === 0 ? (
-                            <tr>
-                              <td colSpan="7" className="text-center py-4">
-                                No previous attendance records found.
-                              </td>
-                            </tr>
-                          ) : previousRecords.map((record) => {
-                            const employee = employees.find((item) =>
-                              attendanceBelongsToEmployee(record, item)
-                            );
-                            const companyId =
-                              employee?.employeeDetails?.employeeId ||
-                              employee?.employeeId ||
-                              record.employeeCode ||
-                              record.employeeId ||
-                              "--";
-                            const status = getAttendanceStatus(record);
+                    <MaterialReactTable
+                      columns={[
+                        { accessorKey: "dateLabel", header: "Date" },
+                        { accessorKey: "employeeId", header: "Employee ID" },
+                        { accessorKey: "employeeName", header: "Employee Name" },
+                        { accessorKey: "checkIn", header: "Check-in" },
+{
+  accessorKey: "checkOut",
+  header: "Check-out",
+  Cell: ({ row }) => {
+    const record = row.original;
 
+    return record.checkOut
+      ? formatAttendanceTime(record.checkOut)
+      : record.checkIn
+        ? "Unknown"
+        : "--";
+  },
+},                        { accessorKey: "workingHours", header: "Working Hours" },
+                        {
+                          accessorKey: "status",
+                          header: "Status",
+                          Cell: ({ cell }) => {
+                            const status = cell.getValue();
                             return (
-                              <tr key={record.id}>
-                                <td>{record.date ? new Date(`${record.date}T00:00:00`).toLocaleDateString("en-IN") : "--"}</td>
-                                <td>{companyId}</td>
-                                <td>{employee?.name || record.employeeName || "--"}</td>
-                                <td>{formatAttendanceTime(record.checkIn, record.checkInTime)}</td>
-                                <td>{formatAttendanceTime(record.checkOut, record.checkOutTime)}</td>
-                                <td>{getWorkedDuration(record, false)}</td>
-                                <td>
-                                  <span className={`admin-attendance-status ${
-                                    status === "Working" ? "is-working" :
-                                    status === "Completed" ? "is-completed" : "is-absent"
-                                  }`}>
-                                    {status}
-                                  </span>
-                                </td>
-                              </tr>
+                              <span className={`admin-attendance-status ${
+                                status === "Working" ? "is-working" :
+                                status === "Completed" ? "is-completed" : "is-absent"
+                              }`}>
+                                {status}
+                              </span>
                             );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                          }
+                        }
+                      ]}
+                      data={previousRecords.map((record) => {
+                        const employee = employees.find((item) =>
+                          attendanceBelongsToEmployee(record, item)
+                        );
+                        return {
+                          id: record.id,
+                          dateLabel: record.date
+                            ? new Date(`${record.date}T00:00:00`).toLocaleDateString("en-IN")
+                            : "--",
+                          employeeId:
+                            employee?.employeeDetails?.employeeId ||
+                            employee?.employeeId ||
+                            record.employeeCode ||
+                            record.employeeId ||
+                            "--",
+                          employeeName: employee?.name || record.employeeName || "--",
+                          checkIn: formatAttendanceTime(record.checkIn, record.checkInTime),
+                          checkOut: formatAttendanceTime(record.checkOut, record.checkOutTime),
+                          workingHours: getWorkedDuration(record, false),
+                          status: getAttendanceStatus(record)
+                        };
+                      })}
+                      getRowId={(row) => String(row.id)}
+                      enableSorting
+                      enableColumnFilters
+                      enablePagination
+                      enableGlobalFilter={false}
+                      initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
+                      muiTablePaperProps={{
+                        className: "admin-mrt-paper",
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          border: "1px solid rgba(89, 242, 254, 0.15)",
+                          borderRadius: "12px",
+                          boxShadow: "none",
+                          overflow: "hidden"
+                        }
+                      }}
+                      muiTopToolbarProps={{
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+                          "& .MuiInputBase-root": { color: "var(--white)" },
+                          "& .MuiFormLabel-root": { color: "var(--muted)" }
+                        }
+                      }}
+                      muiBottomToolbarProps={{
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+                          "& .MuiTablePagination-root, & .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { color: "var(--white)" },
+                          "& .MuiSelect-icon": { color: "var(--cyan)" }
+                        }
+                      }}
+                      muiTableHeadCellProps={{
+                        sx: {
+                          backgroundColor: "var(--navy)",
+                          color: "var(--cyan)",
+                          borderBottom: "1px solid var(--teal)",
+                          fontWeight: 700,
+                          fontSize: "12px",
+                          whiteSpace: "nowrap"
+                        }
+                      }}
+                      muiTableBodyCellProps={{
+                        sx: {
+                          backgroundColor: "var(--navy-light)",
+                          color: "var(--white)",
+                          borderBottom: "1px solid rgba(165, 186, 200, 0.15)",
+                          fontSize: "13px",
+                          whiteSpace: "nowrap"
+                        }
+                      }}
+                      muiTableBodyRowProps={{
+                        sx: {
+                          "&:hover td": {
+                            backgroundColor: "var(--teal)",
+                            color: "var(--white)"
+                          }
+                        }
+                      }}
+                    />
                   )}
                 </div>
               </div>
