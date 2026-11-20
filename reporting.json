@@ -1,0 +1,193 @@
+{
+  "attendance": [
+    {
+      "employeeId": "NVS001",
+      "employeeCode": "",
+      "employeeName": "Employee One",
+      "date": "2026-11-19",
+      "checkIn": 1795065984681,
+      "checkOut": 1795066903607,
+      "breaks": [],
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795066896419
+      },
+      "reportSubmitted": true,
+      "id": "lCGMbsl-Ysg"
+    },
+    {
+      "employeeId": "vO1cTSge3w0",
+      "employeeCode": "",
+      "employeeName": "Jagadeesh",
+      "date": "2026-11-19",
+      "checkIn": 1795066789545,
+      "checkOut": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "33OCfhuePKQ"
+    },
+    {
+      "employeeId": "UOph_LVfIcg",
+      "employeeCode": "",
+      "employeeName": "kusuma",
+      "date": "2026-11-19",
+      "checkIn": "11:34 am",
+      "checkOut": "11:55 am",
+      "breaks": [],
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795069548138,
+        "submittedTime": "11:55 am"
+      },
+      "reportSubmitted": true,
+      "id": "cLIz1no91U8"
+    },
+    {
+      "employeeId": "RWl8TWm_Tx0",
+      "employeeCode": "",
+      "employeeName": "Reddamma",
+      "date": "2026-11-19",
+      "checkIn": 1795070539201,
+      "checkInTime": "12:12 pm",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [
+        {
+          "start": 1795071133490,
+          "end": 1795071162994
+        }
+      ],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "1Qrn2VFCvwg"
+    },
+    {
+      "employeeId": "_bXDqjyI7C8",
+      "employeeCode": "",
+      "employeeName": "Lavanya Pondru",
+      "date": "2026-11-19",
+      "checkIn": 1795072804694,
+      "checkInTime": "12:50 pm",
+      "checkOut": 1795091607815,
+      "checkOutTime": "06:03 PM",
+      "breaks": [],
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795091598952,
+        "submittedTime": "06:03 PM"
+      },
+      "reportSubmitted": true,
+      "id": "VsYUIJ5HM04"
+    },
+    {
+      "employeeId": "c0lb2YggQXw",
+      "employeeCode": "",
+      "employeeName": "Lavanya Pondru",
+      "date": "2026-11-19",
+      "checkIn": 1795078706113,
+      "checkInTime": "02:28 PM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "1JAthlSSwT0"
+    },
+    {
+      "employeeId": "_bXDqjyI7C8",
+      "employeeCode": "",
+      "employeeName": "Lavanya Pondru",
+      "date": "2026-11-20",
+      "checkIn": 1795146899613,
+      "checkInTime": "09:24 AM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "s2waEAFf21g"
+    },
+    {
+      "employeeId": "M7BsfIXasEg",
+      "employeeCode": "",
+      "employeeName": "Ajit",
+      "date": "2026-11-20",
+      "checkIn": 1795148727452,
+      "checkInTime": "09:55 AM",
+      "checkOut": 1795153429772,
+      "checkOutTime": "11:13 AM",
+      "breaks": [],
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795153417468,
+        "submittedTime": "11:13 AM"
+      },
+      "reportSubmitted": true,
+      "id": "MUQYGY-BLIE"
+    },
+    {
+      "employeeId": "vO1cTSge3w0",
+      "employeeCode": "",
+      "employeeName": "Jagadeesh",
+      "date": "2026-11-20",
+      "checkIn": 1795153100913,
+      "checkInTime": "11:08 AM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "aYoj2-G8ERg"
+    },
+    {
+      "employeeId": "NVS001",
+      "employeeCode": "",
+      "employeeName": "Employee One",
+      "date": "2026-11-20",
+      "checkIn": 1795153677284,
+      "checkInTime": "11:17 AM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "SR-jNDwthnM"
+    },
+    {
+      "employeeId": "c0lb2YggQXw",
+      "employeeCode": "",
+      "employeeName": "Lavanya Pondru",
+      "date": "2026-11-20",
+      "checkIn": 1795153702666,
+      "checkInTime": "11:18 AM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "dWeTdmXGbSY"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

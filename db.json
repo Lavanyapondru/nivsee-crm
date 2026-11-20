@@ -1,0 +1,155 @@
+{
+  "employees": [
+    {
+      "id": "NVS001",
+      "name": "Employee One",
+      "email": "employee@nivsee.com",
+      "phone": "9515618887",
+      "password": "Employee@123",
+      "role": "employee",
+      "department": "Development",
+      "designation": "Frontend Developer",
+      "status": "active",
+      "employeeDetails": {
+        "employeeId": "NVS006",
+        "dateOfBirth": "2003-09-26",
+        "bloodGroup": "B+",
+        "emergencyContact": "8331886887"
+      }
+    },
+    {
+      "id": "c0lb2YggQXw",
+      "name": "Lavanya Pondru",
+      "email": "lavanyadeveloper07@gmail.com",
+      "phone": "8331886887",
+      "department": "Development",
+      "designation": "Backend Developer",
+      "password": "employee@123",
+      "role": "employee",
+      "status": "active",
+      "employeeDetails": {
+        "employeeId": "NVS007",
+        "dateOfBirth": "2003-09-26",
+        "bloodGroup": "B+",
+        "emergencyContact": "8331886887"
+      }
+    },
+    {
+      "id": "M7BsfIXasEg",
+      "name": "Ajit",
+      "email": "ajit@nivsee.com",
+      "phone": "9492148887",
+      "department": "Development",
+      "designation": "PHP Developer",
+      "password": "employee@123",
+      "role": "employee",
+      "status": "active",
+      "employeeDetails": {
+        "employeeId": "NVS004",
+        "dateOfBirth": "2003-09-26",
+        "bloodGroup": "B+",
+        "emergencyContact": "8331886887"
+      }
+    },
+    {
+      "id": "_bXDqjyI7C8",
+      "name": "Lavanya Pondru",
+      "email": "pondrulavanya123@gmail.com",
+      "phone": "9515618887",
+      "department": "designing",
+      "designation": "developer",
+      "password": "nivsee@123",
+      "role": "employee",
+      "status": "active",
+      "employeeDetails": {
+        "employeeId": "NVS001",
+        "dateOfBirth": "2003-09-26",
+        "bloodGroup": "B+",
+        "emergencyContact": "8331886887"
+      }
+    },
+    {
+      "id": "vO1cTSge3w0",
+      "name": "Jagadeesh",
+      "email": "jagadeesh@gmail.com",
+      "phone": "9876543210",
+      "department": "Development",
+      "designation": "Backend Developer",
+      "password": "Nivsee@123",
+      "role": "employee",
+      "status": "active",
+      "employeeDetails": {
+        "employeeId": "NVS002",
+        "dateOfBirth": "2026-11-20",
+        "bloodGroup": "B+",
+        "emergencyContact": "9515618887"
+      }
+    },
+    {
+      "id": "UOph_LVfIcg",
+      "name": "kusuma",
+      "email": "kusuma@gmail.com",
+      "phone": "9823823456",
+      "department": "Designing",
+      "designation": "Ui/UX Designer",
+      "password": "nivsee@123",
+      "role": "employee",
+      "status": "active",
+      "employeeDetails": {
+        "employeeId": "NVS003",
+        "dateOfBirth": "2026-11-19",
+        "bloodGroup": "AB+",
+        "emergencyContact": "9515618887"
+      }
+    },
+    {
+      "id": "RWl8TWm_Tx0",
+      "name": "Reddamma",
+      "email": "reddamma@gmail.com",
+      "phone": "8796523456",
+      "department": "Designing",
+      "designation": "Ui/UX Designer",
+      "password": "nivsee@123",
+      "role": "employee",
+      "status": "active",
+      "employeeDetails": {
+        "employeeId": "NVS005",
+        "dateOfBirth": "2026-11-19",
+        "bloodGroup": "B-",
+        "emergencyContact": "9515618887"
+      }
+    }
+  ],
+  "attendance": [
+    {
+      "employeeId": "M7BsfIXasEg",
+      "employeeCode": "",
+      "employeeName": "Ajit",
+      "date": "2026-11-19",
+      "checkIn": 1795064042275,
+      "checkOut": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "VIaRR06U8aM"
+    },
+    {
+      "employeeId": "NVS001",
+      "employeeCode": "",
+      "employeeName": "Employee One",
+      "date": "2026-11-19",
+      "checkIn": 1795064176153,
+      "checkOut": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "82bj_29rd1w"
+    }
+  ],
+  "workReports": [],
+  "tasks": [],
+  "projects": [],
+  "leaves": [],
+  "notifications": [],
+  "$schema": "./node_modules/json-server/schema.json"
+}

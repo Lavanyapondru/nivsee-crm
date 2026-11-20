@@ -1,0 +1,13 @@
+
+{
+  "admins": [
+    {
+      "id": "ADM001",
+      "name": "Nivsee Admin",
+      "email": "admin@nivsee.com",
+      "password": "Admin@123",
+      "role": "admin",
+      "status": "active"
+    }
+  ]
+}
