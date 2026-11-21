@@ -2,6 +2,7 @@
 const EMPLOYEE_API = "http://localhost:5000";
 const ADMIN_API = "http://localhost:5001";
 const REPORTING_API = "http://localhost:5002";
+const LEAVE_API = "http://localhost:5003";
 
 export const api = {
   // Employee login: email, employee ID or phone
@@ -153,7 +154,66 @@ updateAttendance: async (attendanceId, updates) => {
 
   return response.json();
 },
+// Get all leave requests for Admin Dashboard
+getAllLeaves: async () => {
+  const response = await fetch(`${LEAVE_API}/leaves`);
 
+  if (!response.ok) {
+    throw new Error("Unable to fetch leave requests");
+  }
+
+  return response.json();
+},
+
+// Get leave requests for a particular employee
+getEmployeeLeaves: async (employeeRecordId) => {
+  const response = await fetch(
+    `${LEAVE_API}/leaves?employeeRecordId=${encodeURIComponent(employeeRecordId)}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Unable to fetch employee leave requests");
+  }
+
+  return response.json();
+},
+
+// Submit employee leave request
+addLeave: async (leave) => {
+  const response = await fetch(`${LEAVE_API}/leaves`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(leave)
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to submit leave request");
+  }
+
+  return response.json();
+},
+
+// Admin updates leave status
+updateLeave: async (leaveId, updates) => {
+  const response = await fetch(
+    `${LEAVE_API}/leaves/${encodeURIComponent(leaveId)}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(updates)
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Unable to update leave request");
+  }
+
+  return response.json();
+},
 
 
 };

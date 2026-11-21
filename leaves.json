@@ -1,0 +1,53 @@
+{
+  "leaves": [
+    {
+      "employeeRecordId": "c0lb2YggQXw",
+      "employeeId": "NVS007",
+      "employeeName": "Lavanya Pondru",
+      "fromDate": "2026-11-21",
+      "toDate": "2026-11-21",
+      "reason": "sick leave",
+      "appliedDate": "2026-11-21",
+      "status": "Cancelled",
+      "id": "ghhWmmdBVac",
+      "updatedDate": "2026-11-21"
+    },
+    {
+      "employeeRecordId": "UOph_LVfIcg",
+      "employeeId": "NVS003",
+      "employeeName": "kusuma",
+      "fromDate": "2026-11-23",
+      "toDate": "2026-11-25",
+      "reason": "For going to hometown",
+      "appliedDate": "2026-11-21",
+      "status": "Approved",
+      "id": "WtFcbs4CQHI",
+      "updatedDate": "2026-11-21"
+    },
+    {
+      "employeeRecordId": "M7BsfIXasEg",
+      "employeeId": "NVS004",
+      "employeeName": "Ajit",
+      "fromDate": "2026-12-02",
+      "toDate": "2026-12-04",
+      "reason": "sick leave",
+      "appliedDate": "2026-11-21",
+      "status": "Approved",
+      "id": "ic8mDvs0MM8",
+      "updatedDate": "2026-11-21"
+    },
+    {
+      "employeeRecordId": "vO1cTSge3w0",
+      "employeeId": "NVS002",
+      "employeeName": "Jagadeesh",
+      "fromDate": "2026-11-23",
+      "toDate": "2026-11-24",
+      "reason": "Personal Leave",
+      "appliedDate": "2026-11-21",
+      "status": "Approved",
+      "id": "DnJnQfmISVE",
+      "updatedDate": "2026-11-21"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

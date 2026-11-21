@@ -153,11 +153,20 @@
       "date": "2026-11-20",
       "checkIn": 1795153100913,
       "checkInTime": "11:08 AM",
-      "checkOut": null,
-      "checkOutTime": null,
+      "checkOut": 1795179295000,
+      "checkOutTime": "06:24 PM",
       "breaks": [],
-      "report": null,
-      "reportSubmitted": false,
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "aa",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795179290820,
+        "submittedTime": "06:24 PM"
+      },
+      "reportSubmitted": true,
       "id": "aYoj2-G8ERg"
     },
     {
@@ -205,6 +214,62 @@
       },
       "reportSubmitted": true,
       "id": "dWeTdmXGbSY"
+    },
+    {
+      "employeeId": "c0lb2YggQXw",
+      "employeeCode": "",
+      "employeeName": "Lavanya Pondru",
+      "date": "2026-11-21",
+      "checkIn": 1795233195388,
+      "checkInTime": "09:23 AM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "nZpfL7rP2Sg"
+    },
+    {
+      "employeeId": "UOph_LVfIcg",
+      "employeeCode": "",
+      "employeeName": "kusuma",
+      "date": "2026-11-21",
+      "checkIn": 1795238367055,
+      "checkInTime": "10:49 AM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "gagp5QY5-j8"
+    },
+    {
+      "employeeId": "M7BsfIXasEg",
+      "employeeCode": "",
+      "employeeName": "Ajit",
+      "date": "2026-11-21",
+      "checkIn": 1795244927564,
+      "checkInTime": "12:38 PM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "Ggv_mZfA3Lg"
+    },
+    {
+      "employeeId": "vO1cTSge3w0",
+      "employeeCode": "",
+      "employeeName": "Jagadeesh",
+      "date": "2026-11-21",
+      "checkIn": 1795245710597,
+      "checkInTime": "12:51 PM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "Dk8nHwjdO_c"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

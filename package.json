@@ -10,6 +10,7 @@
     "server": "json-server --watch db.json --port 5000",
     "server:admins": "json-server admins.json --port 5001",
     "server:attendance": "json-server reporting.json --port 5002",
+    "server:leaves": "json-server leaves.json --port 5003",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,0 +1,314 @@
+/* Employee Leave Management */
+.employee-leave {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.leave-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 18px;
+  background: linear-gradient(120deg, #0C3045, #092337 75%) !important;
+}
+
+.leave-intro h2 {
+  margin: 7px 0 5px;
+  color: #e8e9ec;
+  font-size: 1.55rem;
+  font-weight: 750;
+}
+
+.leave-intro p {
+  margin: 0;
+  color: #59F2FE;
+}
+
+.leave-intro-icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 16px;
+  color: #3157a4;
+  background: #fff;
+}
+
+.leave-form-card,
+.leave-history-card {
+  padding: 24px;
+}
+
+.leave-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.leave-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.leave-input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 9px;
+  color: #1e293b;
+  background: #fff;
+  outline: none;
+  font: inherit;
+}
+
+.leave-input:focus {
+  border-color: #5277c7;
+  box-shadow: 0 0 0 3px rgba(82, 119, 199, 0.12);
+}
+
+.leave-reason {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.leave-submit {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leave-submit:disabled,
+.leave-refresh:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.leave-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 13px;
+  border-radius: 9px;
+  font-size: 0.9rem;
+}
+
+.leave-alert.error {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.leave-alert.success {
+  color: #166534;
+  background: #f0fdf4;
+}
+
+.leave-history-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.leave-history-heading .emp-card-title {
+  margin-bottom: 0;
+}
+
+.leave-refresh {
+  border: 1px solid #3e9bb3;
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: #050505;
+  background: linear-gradient(90deg, var(--cyan), var(--aqua));
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.leave-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.leave-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.leave-table th,
+.leave-table td {
+  padding: 13px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e8edf3;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+.leave-table th {
+  color: #64748b;
+  background: #f8fafc;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.leave-table td {
+  color: #f6f7f8;
+}
+
+.leave-reason-cell {
+  min-width: 180px;
+  max-width: 300px;
+  white-space: normal;
+}
+
+.leave-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.leave-status.is-pending {
+  color: #a16207;
+  background: #fef9c3;
+}
+
+.leave-status.is-approved {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.leave-status.is-cancelled {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+@media (max-width: 640px) {
+  .leave-intro,
+  .leave-form-card,
+  .leave-history-card {
+    padding: 17px;
+  }
+
+  .leave-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .leave-intro h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* MRT toolbar and pagination controls */
+.leave-mrt-wrap .MuiIconButton-root {
+  color: #59F2FE !important;
+}
+
+.leave-mrt-wrap .MuiSvgIcon-root {
+  color: #59F2FE !important;
+}
+
+/* Search input */
+.leave-mrt-wrap .MuiInputBase-root {
+  color: #ffffff !important;
+}
+
+.leave-mrt-wrap .MuiOutlinedInput-notchedOutline {
+  border-color: #59F2FE !important;
+}
+
+.leave-mrt-wrap .MuiInputBase-input::placeholder {
+  color: #ffffff !important;
+  opacity: 0.8;
+}
+
+/* Rows per page and pagination text */
+.leave-mrt-wrap .MuiTablePagination-root,
+.leave-mrt-wrap .MuiTablePagination-selectLabel,
+.leave-mrt-wrap .MuiTablePagination-displayedRows {
+  color: #ffffff !important;
+}
+
+/* Rows per page dropdown */
+.leave-mrt-wrap .MuiTablePagination-select {
+  color: #59F2FE !important;
+}
+
+.leave-mrt-wrap .MuiTablePagination-selectIcon {
+  color: #59F2FE !important;
+}
+
+/* Disabled pagination buttons */
+.leave-mrt-wrap .MuiIconButton-root.Mui-disabled {
+  color: #607d8b !important;
+}
+
+/* Dropdown menu */
+.MuiPopover-root .MuiPaper-root {
+  background-color: #092337 !important;
+  color: #ffffff !important;
+}
+
+.MuiMenuItem-root {
+  color: #ffffff !important;
+}
+
+.MuiMenuItem-root:hover,
+.MuiMenuItem-root.Mui-selected {
+  background-color: #17465e !important;
+  color: #59F2FE !important;
+}
+/* Make Rows per page label visible */
+.leave-mrt-wrap .MuiTablePagination-selectLabel {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+/* Make selected page size visible */
+.leave-mrt-wrap .MuiTablePagination-select {
+  color: #59F2FE !important;
+  font-weight: 600 !important;
+}
+
+/* Make dropdown arrow visible */
+.leave-mrt-wrap .MuiTablePagination-selectIcon {
+  color: #59F2FE !important;
+}
+.admin-leave-stat:hover {
+  /* transition: 0.3s; */
+  border: 2px solid cyan;
+}
+.leave-alert.success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.leave-alert-close {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: #080707;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.leave-alert-close:hover {
+  color: #0d0d0e;
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MaterialReactTable } from "material-react-table";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
+import AdminLeave from "../components/AdminLeave";
 import "./AdminDashboard.css";
 
 
@@ -89,17 +90,51 @@ const getWorkedDuration = (record, isToday = false) => {
 };
 
 const getAttendanceStatus = (record) => {
-  if (!record) return "Not Checked In";
-
-  if (record.checkIn && !record.checkOut) {
-    return "Unknown";
+  if (!record || !record.checkIn) {
+    return "Not Checked In";
   }
 
   if (record.checkOut) {
     return "Completed";
   }
 
-  return "Not Checked In";
+  const workedMinutes = getWorkedDuration(record, true);
+  const requiredMinutes = 9 * 60;
+
+  if (workedMinutes >= requiredMinutes) {
+    return "Unknown";
+  }
+
+  return "Working";
+};
+const getHistoryStatus = (record) => {
+  if (!record || !record.checkIn) {
+    return "Not Checked In";
+  }
+
+  if (record.checkOut) {
+    return "Completed";
+  }
+
+  // For an open historical record, measure elapsed time from check-in until now.
+  // Numeric timestamps are used by the current attendance flow.
+  if (typeof record.checkIn === "number" || /^\d{10,}$/.test(String(record.checkIn))) {
+    const start = Number(record.checkIn);
+    const elapsedMinutes = Math.max(0, Math.floor((Date.now() - start) / 60000));
+    const completedBreakMinutes = (record.breaks || []).reduce((total, item) => {
+      if (typeof item.start === "number" && typeof item.end === "number") {
+        return total + Math.max(0, Math.floor((item.end - item.start) / 60000));
+      }
+      return total;
+    }, 0);
+
+    return elapsedMinutes - completedBreakMinutes >= 9 * 60
+      ? "Unknown"
+      : "Working";
+  }
+
+  // Legacy text-time records cannot reliably establish elapsed time across dates.
+  return "Working";
 };
 
 function AdminDashboard() {
@@ -762,7 +797,6 @@ const [form, setForm] = useState({
                 const matchedEmployee = employees.find((employee) =>
                   attendanceBelongsToEmployee(record, employee)
                 );
-
                 return [
                   record.employeeName,
                   record.employeeId,
@@ -866,20 +900,28 @@ const [form, setForm] = useState({
                         { accessorKey: "checkOut", header: "Check-out" },
                         { accessorKey: "workingHours", header: "Working Hours" },
                         {
-                          accessorKey: "status",
-                          header: "Status",
-                          Cell: ({ cell }) => {
-                            const status = cell.getValue();
-                            return (
-                              <span className={`admin-attendance-status ${
-                                status === "Working" ? "is-working" :
-                                status === "Completed" ? "is-completed" : "is-absent"
-                              }`}>
-                                {status}
-                              </span>
-                            );
-                          }
-                        }
+  accessorKey: "status",
+  header: "Status",
+  Cell: ({ cell }) => {
+    const status = cell.getValue();
+
+    return (
+      <span
+        className={`admin-attendance-status ${
+          status === "Working"
+            ? "is-working"
+            : status === "Completed"
+              ? "is-completed"
+              : status === "Unknown"
+                ? "unknown"
+                : "is-absent"
+        }`}
+      >
+        {status}
+      </span>
+    );
+  },
+}
                       ]}
                       data={todayRows.map(({ employee, record }) => ({
                         id: employee.id,
@@ -1012,7 +1054,8 @@ const [form, setForm] = useState({
                             return (
                               <span className={`admin-attendance-status ${
                                 status === "Working" ? "is-working" :
-                                status === "Completed" ? "is-completed" : "is-absent"
+                                status === "Completed" ? "is-completed" :
+                                status === "Unknown" ? "unknown" : "is-absent"
                               }`}>
                                 {status}
                               </span>
@@ -1039,7 +1082,7 @@ const [form, setForm] = useState({
                           checkIn: formatAttendanceTime(record.checkIn, record.checkInTime),
                           checkOut: formatAttendanceTime(record.checkOut, record.checkOutTime),
                           workingHours: getWorkedDuration(record, false),
-                          status: getAttendanceStatus(record)
+                          status: getHistoryStatus(record)
                         };
                       })}
                       getRowId={(row) => String(row.id)}
@@ -1112,16 +1155,19 @@ const [form, setForm] = useState({
           })()}
 
           {/* Other modules - to be developed */}
-          {!["Dashboard", "Employees", "Attendance"].includes(activeModule) && (
-            <div className="card border-0 shadow-sm p-5 text-center">
-              <i className="bi bi-tools fs-1 text-primary"></i>
-              <h5 className="mt-3">{activeModule} Module</h5>
-              <p className="text-muted mb-0">
-                This module will be connected to JSON Server next.
-              </p>
-            </div>
-          )}
+          {/* Admin Leave Module */}
+{activeModule === "Leaves" && <AdminLeave />}
 
+{/* Other modules - to be developed */}
+{!["Dashboard", "Employees", "Attendance", "Leaves"].includes(activeModule) && (
+  <div className="card border-0 shadow-sm p-5 text-center">
+    <i className="bi bi-tools fs-1 text-primary"></i>
+    <h5 className="mt-3">{activeModule} Module</h5>
+    <p className="text-muted mb-0">
+      This module will be connected to JSON Server next.
+    </p>
+  </div>
+)}
         </main>
       </div>
     </div>

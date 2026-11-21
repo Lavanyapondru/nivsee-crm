@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
+import EmployeeLeave from "../components/EmployeeLeave";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LogIn, LogOut, Timer, Hourglass, Coffee, Play, ClipboardList,
@@ -1049,23 +1050,27 @@ const handleLogout = () => {
             </motion.div>
           )}
 
-          {activeModule === "Tasks & Projects" && (
-            <div className="emp-card emp-placeholder">
-              <span className="emp-placeholder-icon"><ClipboardList size={30} /></span>
-              <h3>Tasks &amp; Projects</h3>
-              <p>Your assigned tasks and project details will appear here once this module is connected to the CRM task data.</p>
-              <span className="emp-coming-soon">Module setup pending</span>
-            </div>
-          )}
-
           {activeModule === "Leave Management" && (
+          <EmployeeLeave
+          employeeRecordId={session?.employeeId}
+          employeeId={
+          employeeProfile?.employeeDetails?.employeeId ||
+          employeeProfile?.employeeId ||
+          session?.employeeCode ||
+          employeeProfile?.id
+          }
+         employeeName={employeeProfile?.name || session?.name}
+        />
+        )}
+
+          {/* {activeModule === "Leave Management" && (
             <div className="emp-card emp-placeholder">
               <span className="emp-placeholder-icon"><CalendarDays size={30} /></span>
               <h3>Leave Management</h3>
               <p>Leave balances, applications and approval status will appear here when the leave management API is added.</p>
               <span className="emp-coming-soon">Module setup pending</span>
             </div>
-          )}
+          )} */}
 
           {activeModule === "Change Password" && (
             <div className="emp-card emp-placeholder">
