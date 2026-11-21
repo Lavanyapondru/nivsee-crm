@@ -47,6 +47,18 @@
       "status": "Approved",
       "id": "DnJnQfmISVE",
       "updatedDate": "2026-11-21"
+    },
+    {
+      "employeeRecordId": "c0lb2YggQXw",
+      "employeeId": "NVS007",
+      "employeeName": "Lavanya Pondru",
+      "fromDate": "2026-11-23",
+      "toDate": "2026-11-23",
+      "reason": "sick leave",
+      "appliedDate": "2026-11-21",
+      "status": "Approved",
+      "id": "p4JadTYhVHk",
+      "updatedDate": "2026-11-21"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

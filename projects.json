@@ -1,0 +1,24 @@
+{
+  "projects": [
+    {
+      "id": "vHkTpmeu31o",
+      "projectName": "Nivsee crm",
+      "description": "create complete CRM with admin login & Dashboard and employee login & Dashboard",
+      "technologies": [
+        "React",
+        "JavaScript",
+        "NodeJS",
+        "MySQL"
+      ],
+      "duration": "1 month",
+      "startDate": "2026-11-22",
+      "endDate": "2026-12-21",
+      "status": "Planning",
+      "projectAdmin": "Nivsee Admin",
+      "updatedAt": "2026-11-21T11:11:55.367Z",
+      "createdBy": "admin@nivsee.com",
+      "createdAt": "2026-11-21T11:10:20.197Z"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

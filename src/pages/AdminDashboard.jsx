@@ -3,6 +3,7 @@ import { MaterialReactTable } from "material-react-table";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import AdminLeave from "../components/AdminLeave";
+import AdminProjectsTasks from "../components/AdminProjectsTasks";
 import "./AdminDashboard.css";
 
 
@@ -1155,11 +1156,27 @@ const [form, setForm] = useState({
           })()}
 
           {/* Other modules - to be developed */}
-          {/* Admin Leave Module */}
+        
+{/* Admin Leave Module */}
 {activeModule === "Leaves" && <AdminLeave />}
 
+{/* Projects & Tasks Module */}
+{["Projects", "Tasks"].includes(activeModule) && (
+  <AdminProjectsTasks
+    key={activeModule}
+    initialTab={activeModule === "Tasks" ? "tasks" : "projects"}
+  />
+)}
+
 {/* Other modules - to be developed */}
-{!["Dashboard", "Employees", "Attendance", "Leaves"].includes(activeModule) && (
+{![
+  "Dashboard",
+  "Employees",
+  "Attendance",
+  "Leaves",
+  "Projects",
+  "Tasks"
+].includes(activeModule) && (
   <div className="card border-0 shadow-sm p-5 text-center">
     <i className="bi bi-tools fs-1 text-primary"></i>
     <h5 className="mt-3">{activeModule} Module</h5>
@@ -1168,6 +1185,8 @@ const [form, setForm] = useState({
     </p>
   </div>
 )}
+
+
         </main>
       </div>
     </div>

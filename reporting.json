@@ -224,7 +224,12 @@
       "checkInTime": "09:23 AM",
       "checkOut": null,
       "checkOutTime": null,
-      "breaks": [],
+      "breaks": [
+        {
+          "start": 1795259995176,
+          "end": 1795260018723
+        }
+      ],
       "report": null,
       "reportSubmitted": false,
       "id": "nZpfL7rP2Sg"

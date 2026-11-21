@@ -1,0 +1,20 @@
+{
+  "tasks": [
+    {
+      "id": "E480tcYaLvg",
+      "projectId": "vHkTpmeu31o",
+      "projectName": "Nivsee crm",
+      "employeeRecordId": "_bXDqjyI7C8",
+      "employeeId": "NVS001",
+      "employeeName": "Lavanya Pondru",
+      "taskName": "create employee and admin login",
+      "description": "Using everything with Json format , and also employee login id be stored in local storage.",
+      "deadline": "2026-11-23",
+      "status": "Pending",
+      "assignedBy": "Nivsee Admin",
+      "updatedAt": "2026-11-21T11:14:12.823Z",
+      "assignedAt": "2026-11-21T11:13:55.560Z"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

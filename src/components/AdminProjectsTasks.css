@@ -1,0 +1,571 @@
+/* Project & Task module — existing Nivsee navy / cyan theme */
+
+.admin-projects-module {
+  color: var(--white);
+}
+
+/* Buttons */
+
+.admin-project-refresh,
+.admin-project-secondary {
+  color: var(--cyan);
+  background: transparent;
+  border: 1px solid rgba(89, 242, 254, 0.45);
+  border-radius: 9px;
+  padding: 9px 15px;
+}
+
+.admin-project-refresh:hover,
+.admin-project-secondary:hover {
+  color: var(--navy);
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+
+.admin-project-primary {
+  color: var(--navy);
+  background: var(--cyan);
+  border: 1px solid var(--cyan);
+  border-radius: 9px;
+  padding: 10px 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-project-primary:hover {
+  color: var(--navy);
+  background: var(--aqua);
+  border-color: var(--aqua);
+}
+
+.admin-project-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Alerts */
+
+.admin-project-alert-success {
+  color: #9bf2c1;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.admin-project-alert-error {
+  color: #ffb4b4;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Statistics */
+
+.admin-project-stat {
+  position: relative;
+  min-height: 112px;
+  padding: 18px;
+  overflow: hidden;
+  background: var(--navy-light);
+  border: 1px solid rgba(89, 242, 254, 0.17);
+  border-left: 3px solid var(--cyan);
+  border-radius: 13px;
+}
+
+.admin-project-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.admin-project-stat strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--white);
+  font-size: 27px;
+  line-height: 1;
+}
+
+.admin-project-stat > i {
+  position: absolute;
+  top: 23px;
+  right: 19px;
+  color: rgba(89, 242, 254, 0.28);
+  font-size: 28px;
+}
+
+/* Main panel */
+
+.admin-project-panel {
+  overflow: hidden;
+  background: var(--navy-light);
+  border: 1px solid rgba(89, 242, 254, 0.17);
+  border-radius: 16px;
+}
+
+.admin-project-toolbar {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(165, 186, 200, 0.14);
+}
+
+/* Tabs */
+
+.admin-project-tabs {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  background: var(--navy);
+  border: 1px solid rgba(89, 242, 254, 0.15);
+  border-radius: 10px;
+}
+
+.admin-project-tabs button {
+  padding: 9px 14px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-project-tabs button:hover,
+.admin-project-tabs button.active {
+  color: var(--navy);
+  background: var(--cyan);
+}
+
+/* Search */
+
+.admin-project-search {
+  width: min(260px, 100%);
+  min-height: 41px;
+}
+
+/* Forms */
+
+.admin-project-form {
+  margin: 20px;
+  padding: 20px;
+  background: var(--navy);
+  border: 1px solid rgba(89, 242, 254, 0.25);
+  border-radius: 12px;
+}
+
+.admin-project-form h6 {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.admin-project-form .form-label {
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-project-form .form-control,
+.admin-project-form .form-select,
+.admin-project-search,
+.admin-task-status-select {
+  color: var(--white);
+  background-color: var(--navy-light);
+  border: 1px solid rgba(165, 186, 200, 0.3);
+  border-radius: 8px;
+}
+
+.admin-project-form .form-control,
+.admin-project-form .form-select {
+  min-height: 42px;
+}
+
+.admin-project-form textarea.form-control {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.admin-project-form .form-control:focus,
+.admin-project-form .form-select:focus,
+.admin-project-search:focus,
+.admin-task-status-select:focus {
+  color: var(--white);
+  background-color: var(--navy-light);
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 0.2rem rgba(89, 242, 254, 0.13);
+}
+
+.admin-project-form .form-control::placeholder,
+.admin-project-search::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.admin-project-form option,
+.admin-task-status-select option {
+  color: var(--white);
+  background: var(--navy-light);
+}
+
+/* Close button */
+
+.admin-project-close {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: var(--cyan);
+  background: transparent;
+  border: 1px solid rgba(89, 242, 254, 0.3);
+  border-radius: 8px;
+}
+
+.admin-project-close:hover {
+  color: var(--navy);
+  background: var(--cyan);
+}
+
+/* Employee preview */
+
+.admin-project-employee-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  color: var(--white);
+  background: rgba(89, 242, 254, 0.07);
+  border: 1px solid rgba(89, 242, 254, 0.2);
+  border-radius: 9px;
+}
+
+.admin-project-employee-preview > i {
+  color: var(--cyan);
+  font-size: 23px;
+}
+
+.admin-project-employee-preview strong,
+.admin-project-employee-preview span {
+  display: block;
+}
+
+.admin-project-employee-preview span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Project cards */
+
+.admin-project-list {
+  padding: 20px;
+}
+
+.admin-project-card {
+  height: 100%;
+  padding: 18px;
+  background: var(--navy);
+  border: 1px solid rgba(89, 242, 254, 0.16);
+  border-radius: 13px;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.admin-project-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+}
+
+.admin-project-id {
+  display: inline-block;
+  margin-bottom: 7px;
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+}
+
+.admin-project-card h6 {
+  margin-bottom: 0;
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Project status */
+
+.admin-project-status {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 5px 9px;
+  color: var(--cyan);
+  background: rgba(89, 242, 254, 0.1);
+  border: 1px solid rgba(89, 242, 254, 0.25);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-project-status.completed {
+  color: #8be9b0;
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.admin-project-status.in-progress {
+  color: #8bd9ff;
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.admin-project-status.on-hold {
+  color: #ffd18a;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Project information */
+
+.admin-project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 16px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-project-meta i {
+  color: var(--cyan);
+}
+
+/* Technology tags */
+
+.admin-project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 13px;
+}
+
+.admin-project-tags span {
+  padding: 4px 8px;
+  color: var(--cyan);
+  background: rgba(89, 242, 254, 0.08);
+  border: 1px solid rgba(89, 242, 254, 0.18);
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+/* Project progress */
+
+.admin-project-progress {
+  margin-top: 17px;
+  color: var(--muted);
+}
+
+.admin-project-progress strong {
+  color: var(--cyan);
+}
+
+.admin-project-progress .progress {
+  height: 6px;
+  background: rgba(165, 186, 200, 0.15);
+  border-radius: 10px;
+}
+
+.admin-project-progress .progress-bar {
+  background: var(--cyan);
+  border-radius: 10px;
+}
+
+/* Project actions */
+
+.admin-project-action,
+.admin-project-delete {
+  padding: 6px 10px;
+  color: var(--cyan);
+  background: transparent;
+  border: 1px solid rgba(89, 242, 254, 0.35);
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+.admin-project-action:hover {
+  color: var(--navy);
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+
+.admin-project-delete {
+  color: #ff9b9b;
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.admin-project-delete:hover {
+  color: #fff;
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+/* Tasks table */
+
+.admin-project-table-wrap {
+  padding: 8px 20px 20px;
+}
+
+.admin-project-table {
+  min-width: 850px;
+  margin-bottom: 0;
+  color: var(--white);
+}
+
+.admin-project-table thead th {
+  padding: 13px 12px;
+  color: var(--cyan);
+  background: var(--navy);
+  border-bottom: 1px solid var(--teal);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-project-table tbody td {
+  padding: 13px 12px;
+  color: var(--white);
+  background: var(--navy-light);
+  border-color: rgba(165, 186, 200, 0.14);
+  font-size: 13px;
+}
+
+.admin-project-table tbody tr:hover td {
+  color: var(--white);
+  background: var(--teal);
+}
+
+.admin-project-table td strong,
+.admin-project-table td small {
+  display: block;
+}
+
+.admin-project-table td small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Task status dropdown */
+
+.admin-task-status-select {
+  min-width: 125px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-size: 12px;
+}
+
+.admin-task-status-select.completed {
+  color: #8be9b0;
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.admin-task-status-select.in-progress {
+  color: #8bd9ff;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.admin-task-status-select.on-hold {
+  color: #ffd18a;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Task edit and delete icons */
+
+.admin-project-icon-btn {
+  width: 31px;
+  height: 31px;
+  padding: 3px;
+  color: var(--cyan);
+  background: transparent;
+  border: 1px solid rgba(89, 242, 254, 0.3);
+}
+
+.admin-project-icon-btn:hover {
+  color: var(--navy);
+  background: var(--cyan);
+}
+
+.admin-project-icon-btn.danger {
+  color: #ff9b9b;
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.admin-project-icon-btn.danger:hover {
+  color: #fff;
+  background: #b91c1c;
+}
+
+/* Empty state */
+
+.admin-project-empty {
+  display: flex;
+  min-height: 190px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 25px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.admin-project-empty > i {
+  color: var(--cyan);
+  font-size: 32px;
+}
+
+.admin-project-empty strong {
+  color: var(--white);
+}
+
+/* Responsive design */
+
+@media (max-width: 767px) {
+  .admin-project-toolbar {
+    align-items: stretch !important;
+    padding: 14px;
+  }
+
+  .admin-project-toolbar > div:last-child {
+    width: 100%;
+  }
+
+  .admin-project-search {
+    width: 100%;
+  }
+
+  .admin-project-list {
+    padding: 14px;
+  }
+
+  .admin-project-form {
+    margin: 14px;
+    padding: 15px;
+  }
+
+  .admin-project-table-wrap {
+    padding: 8px 14px 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-project-tabs {
+    width: 100%;
+  }
+
+  .admin-project-tabs button {
+    flex: 1;
+    padding-inline: 8px;
+  }
+
+  .admin-project-toolbar > div:last-child {
+    flex-direction: column;
+  }
+
+  .admin-project-primary {
+    width: 100%;
+  }
+}

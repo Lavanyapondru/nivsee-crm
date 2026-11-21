@@ -3,6 +3,8 @@ const EMPLOYEE_API = "http://localhost:5000";
 const ADMIN_API = "http://localhost:5001";
 const REPORTING_API = "http://localhost:5002";
 const LEAVE_API = "http://localhost:5003";
+const PROJECT_API = "http://localhost:5004";
+const TASK_API = "http://localhost:5005";
 
 export const api = {
   // Employee login: email, employee ID or phone
@@ -214,6 +216,142 @@ updateLeave: async (leaveId, updates) => {
 
   return response.json();
 },
+
+  // ==============================
+  // PROJECTS API
+  // ==============================
+
+  getAllProjects: async () => {
+    const response = await fetch(`${PROJECT_API}/projects`);
+
+    if (!response.ok) {
+      throw new Error("Unable to fetch projects");
+    }
+
+    return response.json();
+  },
+
+  addProject: async (project) => {
+    const response = await fetch(`${PROJECT_API}/projects`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(project),
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to add project");
+    }
+
+    return response.json();
+  },
+
+  updateProject: async (projectId, updates) => {
+    const response = await fetch(
+      `${PROJECT_API}/projects/${encodeURIComponent(projectId)}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to update project");
+    }
+
+    return response.json();
+  },
+
+  deleteProject: async (projectId) => {
+    const response = await fetch(
+      `${PROJECT_API}/projects/${encodeURIComponent(projectId)}`,
+      { method: "DELETE" }
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to delete project");
+    }
+
+    return true;
+  },
+
+  // ==============================
+  // TASKS API
+  // ==============================
+
+  getAllTasks: async () => {
+    const response = await fetch(`${TASK_API}/tasks`);
+
+    if (!response.ok) {
+      throw new Error("Unable to fetch tasks");
+    }
+
+    return response.json();
+  },
+
+  getEmployeeTasks: async (employeeId) => {
+    const response = await fetch(
+      `${TASK_API}/tasks?employeeId=${encodeURIComponent(employeeId)}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to fetch employee tasks");
+    }
+
+    return response.json();
+  },
+
+  addTask: async (task) => {
+    const response = await fetch(`${TASK_API}/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to add task");
+    }
+
+    return response.json();
+  },
+
+  updateTask: async (taskId, updates) => {
+    const response = await fetch(
+      `${TASK_API}/tasks/${encodeURIComponent(taskId)}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to update task");
+    }
+
+    return response.json();
+  },
+
+  deleteTask: async (taskId) => {
+    const response = await fetch(
+      `${TASK_API}/tasks/${encodeURIComponent(taskId)}`,
+      { method: "DELETE" }
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to delete task");
+    }
+
+    return true;
+  },
 
 
 };
