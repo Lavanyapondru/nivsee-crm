@@ -18,6 +18,27 @@
       "updatedAt": "2026-11-21T11:11:55.367Z",
       "createdBy": "admin@nivsee.com",
       "createdAt": "2026-11-21T11:10:20.197Z"
+    },
+    {
+      "id": "Jr_enCB7dVA",
+      "projectName": "School Management",
+      "description": "SCHOOL MANAGEMENT with complete web application and mobile application",
+      "technologies": [
+        "React",
+        "JavaScript",
+        "PHP",
+        "LARAVEL",
+        "MySQL",
+        "MONGODB"
+      ],
+      "duration": "1 month",
+      "startDate": "2026-11-23",
+      "endDate": "2026-12-23",
+      "status": "In Progress",
+      "projectAdmin": "Nivsee Admin",
+      "updatedAt": "2026-11-23T06:21:38.269Z",
+      "createdBy": "admin@nivsee.com",
+      "createdAt": "2026-11-23T06:21:38.269Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

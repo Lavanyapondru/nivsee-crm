@@ -293,17 +293,17 @@ updateLeave: async (leaveId, updates) => {
     return response.json();
   },
 
-  getEmployeeTasks: async (employeeId) => {
-    const response = await fetch(
-      `${TASK_API}/tasks?employeeId=${encodeURIComponent(employeeId)}`
-    );
+  getEmployeeTasks: async (employeeRecordId) => {
+  const response = await fetch(
+    `${TASK_API}/tasks?employeeRecordId=${encodeURIComponent(employeeRecordId)}`
+  );
 
-    if (!response.ok) {
-      throw new Error("Unable to fetch employee tasks");
-    }
+  if (!response.ok) {
+    throw new Error("Unable to fetch employee tasks");
+  }
 
-    return response.json();
-  },
+  return response.json();
+},
 
   addTask: async (task) => {
     const response = await fetch(`${TASK_API}/tasks`, {
@@ -322,23 +322,23 @@ updateLeave: async (leaveId, updates) => {
   },
 
   updateTask: async (taskId, updates) => {
-    const response = await fetch(
-      `${TASK_API}/tasks/${encodeURIComponent(taskId)}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updates),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Unable to update task");
+  const response = await fetch(
+    `${TASK_API}/tasks/${encodeURIComponent(taskId)}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updates),
     }
+  );
 
-    return response.json();
-  },
+  if (!response.ok) {
+    throw new Error("Unable to update task");
+  }
+
+  return response.json();
+},
 
   deleteTask: async (taskId) => {
     const response = await fetch(

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { MaterialReactTable } from "material-react-table";
 import { api } from "../services/api";
 import "./AdminProjectsTasks.css";
 
@@ -42,6 +43,30 @@ const getAdminName = (session) =>
   session?.email ||
   "Administrator";
 
+const getLocalDateKey = (value = new Date()) => {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getTaskActivityDate = (task) =>
+  getLocalDateKey(
+    task.employeeSubmittedAt || task.assignedAt || task.updatedAt
+  );
+
+const formatTaskDate = (value) => {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-IN");
+};
+
+const getTaskStatusClass = (status) =>
+  String(status || "Pending").toLowerCase().replace(/\\s+/g, "-");
+
 function AdminProjectsTasks({ initialTab = "projects" }) {
   const [adminSession] = useState(readAdminSession);
   const [projects, setProjects] = useState([]);
@@ -60,8 +85,11 @@ function AdminProjectsTasks({ initialTab = "projects" }) {
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [search, setSearch] = useState("");
+  const [historyFrom, setHistoryFrom] = useState("");
+  const [historyTo, setHistoryTo] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  
 
   const adminName = getAdminName(adminSession);
   const selectedEmployee = employees.find(
@@ -134,6 +162,62 @@ function AdminProjectsTasks({ initialTab = "projects" }) {
         .includes(query)
     );
   }, [tasks, search]);
+
+const todayKey = getLocalDateKey();
+
+const todaysTasks = filteredTasks.filter(
+  (task) => getTaskActivityDate(task) === todayKey
+);
+// Previous task history: based on assignment date,
+// matching the Overall Task Statistics condition
+const previousTasks = filteredTasks.filter((task) => {
+  if (!task.assignedAt) return false;
+
+  const assignedDate = new Date(task.assignedAt);
+
+  if (Number.isNaN(assignedDate.getTime())) return false;
+
+  const assignedKey = getLocalDateKey(assignedDate);
+
+  // Include tasks assigned before today
+  if (assignedKey >= todayKey) return false;
+
+  // Apply history date filters to assignment date
+  if (historyFrom && assignedKey < historyFrom) return false;
+
+  if (historyTo && assignedKey > historyTo) return false;
+
+  return true;
+});
+
+// Overall statistics: tasks assigned before today only
+const previousDateTasks = tasks.filter((task) => {
+  if (!task.assignedAt) return false;
+
+  const assignedDate = new Date(task.assignedAt);
+
+  if (Number.isNaN(assignedDate.getTime())) return false;
+
+  const assignedKey = getLocalDateKey(assignedDate);
+
+  return assignedKey < todayKey;
+});
+
+const allAssignedTasks = previousDateTasks.filter(
+  (task) => Boolean(task.employeeRecordId)
+).length;
+
+const allPendingTasks = previousDateTasks.filter(
+  (task) => task.status === "Pending"
+).length;
+
+const allCompletedTasks = previousDateTasks.filter(
+  (task) => task.status === "Completed"
+).length;
+
+const allTotalTasks = previousDateTasks.length;
+
+const allProjectsCount = projects.length;
 
   const resetProjectForm = () => {
     setProjectForm(emptyProject);
@@ -348,34 +432,196 @@ function AdminProjectsTasks({ initialTab = "projects" }) {
     }
   };
 
+  // Shared MRT columns keep both task-report tables consistent.
+  const taskReportColumns = [
+    {
+      accessorKey: "taskName",
+      header: "Task Name",
+      Cell: ({ row }) => (
+        <div className="admin-task-mrt-task-name">
+          <strong>{row.original.taskName || "Untitled task"}</strong>
+          <small>{row.original.id}</small>
+        </div>
+      ),
+    },
+    {
+      id: "date",
+      accessorFn: (row) => formatTaskDate(
+        row.employeeSubmittedAt || row.assignedAt || row.updatedAt
+      ),
+      header: "Date",
+    },
+    {
+      id: "projectName",
+      accessorFn: (row) =>
+        row.projectName ||
+        projects.find((project) => String(project.id) === String(row.projectId))?.projectName ||
+        "Project unavailable",
+      header: "Project Name",
+    },
+    {
+      id: "employee",
+      accessorFn: (row) => row.employeeName || "Employee",
+      header: "Employee",
+      Cell: ({ row }) => (
+        <div className="admin-task-mrt-employee">
+          <strong>{row.original.employeeName || "Employee"}</strong>
+          <small>{row.original.employeeId || row.original.employeeRecordId || "--"}</small>
+        </div>
+      ),
+    },
+    {
+      id: "deadline",
+      accessorFn: (row) => formatTaskDate(row.deadline),
+      header: "Deadline",
+    },
+    {
+      id: "employeeUpdate",
+      accessorFn: (row) =>
+        row.employeeMessage || row.employeeUpdate || row.workUpdate || "No employee update submitted.",
+      header: "Employee Update",
+      enableColumnFilter: false,
+      Cell: ({ row }) => (
+        <div className="admin-task-employee-update">
+          {row.original.employeeMessage || row.original.employeeUpdate || row.original.workUpdate || "No employee update submitted."}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      Cell: ({ row }) => {
+        const task = row.original;
+        return (
+          <select
+            className={`form-select form-select-sm admin-task-status-select ${getTaskStatusClass(task.status)}`}
+            value={task.status || "Pending"}
+            onChange={(event) => handleTaskStatusChange(task, event.target.value)}
+            aria-label={`Update status for ${task.taskName}`}
+          >
+            <option>Pending</option>
+            <option>In Progress</option>
+            <option>Completed</option>
+            <option>On Hold</option>
+          </select>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      enableSorting: false,
+      enableColumnFilter: false,
+      Cell: ({ row }) => {
+        const task = row.original;
+        return (
+          <div className="d-flex gap-2">
+            <button type="button" className="btn admin-project-icon-btn" onClick={() => startTaskEdit(task)} aria-label={`Edit ${task.taskName}`}>
+              <i className="bi bi-pencil" />
+            </button>
+            <button type="button" className="btn admin-project-icon-btn danger" onClick={() => handleDeleteTask(task)} aria-label={`Delete ${task.taskName}`}>
+              <i className="bi bi-trash" />
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const taskMrtStyleProps = {
+    muiTablePaperProps: {
+      className: "admin-mrt-paper admin-task-mrt-paper",
+      sx: {
+        backgroundColor: "var(--navy-light)",
+        color: "var(--white)",
+        border: "1px solid rgba(89, 242, 254, 0.15)",
+        borderRadius: "12px",
+        boxShadow: "none",
+        overflow: "hidden",
+      },
+    },
+    muiTopToolbarProps: {
+      sx: {
+        backgroundColor: "var(--navy-light)",
+        color: "var(--white)",
+        "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+        "& .MuiInputBase-root": { color: "var(--white)" },
+        "& .MuiFormLabel-root": { color: "var(--muted)" },
+      },
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        backgroundColor: "var(--navy-light)",
+        color: "var(--white)",
+        "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+        "& .MuiTablePagination-root, & .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { color: "var(--white)" },
+        "& .MuiSelect-icon": { color: "var(--cyan)" },
+      },
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        backgroundColor: "var(--navy)",
+        color: "var(--cyan)",
+        borderBottom: "1px solid var(--teal)",
+        fontWeight: 700,
+        fontSize: "12px",
+        whiteSpace: "nowrap",
+      },
+    },
+    muiTableBodyCellProps: {
+      sx: {
+        backgroundColor: "var(--navy-light)",
+        color: "var(--white)",
+        borderBottom: "1px solid rgba(165, 186, 200, 0.15)",
+        fontSize: "13px",
+        whiteSpace: "nowrap",
+      },
+    },
+    muiTableBodyRowProps: {
+      sx: {
+        "&:hover td": {
+          backgroundColor: "var(--teal)",
+          color: "var(--white)",
+        },
+      },
+    },
+    initialState: { pagination: { pageSize: 5, pageIndex: 0 } },
+    enableSorting: true,
+    enableColumnFilters: true,
+    enablePagination: true,
+    enableGlobalFilter: true,
+  };
+
+  
+
   return (
     <section className="admin-projects-module">
-      <div className="admin-projects-heading d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <div>
-          <h5 className="fw-bold mb-1">Project &amp; Task Management</h5>
-          <p className="admin-muted mb-0">
-            Create projects, assign work and track employee task progress.
-          </p>
-        </div>
-        <button
-          type="button"
-          className="btn admin-project-refresh"
-          onClick={loadModuleData}
-          disabled={loading}
-        >
-          <i className="bi bi-arrow-clockwise me-2" />
-          {loading ? "Refreshing..." : "Refresh"}
-        </button>
-      </div>
+      
 
       {message && (
-        <div className="alert admin-project-alert-success" role="status">
-          {message}
+        <div className="alert admin-project-alert-success admin-project-dismissible" role="status">
+          <span>{message}</span>
+          <button
+            type="button"
+            className="admin-project-alert-close"
+            onClick={() => setMessage("")}
+            aria-label="Close success message"
+          >
+            &times;
+          </button>
         </div>
       )}
       {error && (
-        <div className="alert admin-project-alert-error" role="alert">
-          {error}
+        <div className="alert admin-project-alert-error admin-project-dismissible" role="alert">
+          <span>{error}</span>
+          <button
+            type="button"
+            className="admin-project-alert-close"
+            onClick={() => setError("")}
+            aria-label="Close error message"
+          >
+            &times;
+          </button>
         </div>
       )}
 
@@ -389,21 +635,21 @@ function AdminProjectsTasks({ initialTab = "projects" }) {
         </div>
         <div className="col-sm-6 col-xl-3">
           <div className="admin-project-stat">
-            <span>Total Tasks</span>
+            <span>Today Total Tasks</span>
             <strong>{tasks.length}</strong>
             <i className="bi bi-list-check" />
           </div>
         </div>
         <div className="col-sm-6 col-xl-3">
           <div className="admin-project-stat">
-            <span>Pending Tasks</span>
+            <span>Today Pending Tasks</span>
             <strong>{tasks.filter((task) => task.status === "Pending").length}</strong>
             <i className="bi bi-hourglass-split" />
           </div>
         </div>
         <div className="col-sm-6 col-xl-3">
           <div className="admin-project-stat">
-            <span>Completed Tasks</span>
+            <span>Today Completed Tasks</span>
             <strong>{tasks.filter((task) => task.status === "Completed").length}</strong>
             <i className="bi bi-check2-circle" />
           </div>
@@ -674,67 +920,165 @@ function AdminProjectsTasks({ initialTab = "projects" }) {
             )}
           </div>
         ) : (
-          <div className="table-responsive admin-project-table-wrap">
-            {filteredTasks.length === 0 ? (
-              <div className="admin-project-empty">
-                <i className="bi bi-list-check" />
-                <strong>No tasks found</strong>
-                <span>Assign a task to an employee to see it here.</span>
+          <div className="admin-task-report-sections">
+            <section className="admin-task-report-panel">
+              <div className="admin-task-report-heading">
+                <div>
+                  <h6>Today's Task Reports</h6>
+                  <p>Tasks assigned or updated today, with the latest employee submission.</p>
+                </div>
+                <button
+                  type="button"
+                  className="btn admin-project-refresh"
+                  onClick={loadModuleData}
+                  disabled={loading}
+                >
+                  <i className="bi bi-arrow-clockwise me-2" />
+                  {loading ? "Refreshing..." : "Refresh"}
+                </button>
               </div>
-            ) : (
-              <table className="table admin-project-table align-middle">
-                <thead>
-                  <tr>
-                    <th>Task</th>
-                    <th>Project</th>
-                    <th>Employee</th>
-                    <th>Deadline</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredTasks.map((task) => (
-                    <tr key={task.id}>
-                      <td>
-                        <strong>{task.taskName}</strong>
-                        <small>{task.id}</small>
-                      </td>
-                      <td>{task.projectName || projects.find((project) => String(project.id) === String(task.projectId))?.projectName || "Project unavailable"}</td>
-                      <td>
-                        <strong>{task.employeeName || "Employee"}</strong>
-                        <small>{task.employeeId || task.employeeRecordId}</small>
-                      </td>
-                      <td>{task.deadline || "--"}</td>
-                      <td>
-                        <select
-                          className={`form-select form-select-sm admin-task-status-select ${String(task.status || "Pending").toLowerCase().replace(/\s+/g, "-")}`}
-                          value={task.status || "Pending"}
-                          onChange={(event) => handleTaskStatusChange(task, event.target.value)}
-                          aria-label={`Update status for ${task.taskName}`}
-                        >
-                          <option>Pending</option>
-                          <option>In Progress</option>
-                          <option>Completed</option>
-                          <option>On Hold</option>
-                        </select>
-                      </td>
-                      <td>
-                        <div className="d-flex gap-2">
-                          <button type="button" className="btn admin-project-icon-btn" onClick={() => startTaskEdit(task)} aria-label="Edit task"><i className="bi bi-pencil" /></button>
-                          <button type="button" className="btn admin-project-icon-btn danger" onClick={() => handleDeleteTask(task)} aria-label="Delete task"><i className="bi bi-trash" /></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+
+              {todaysTasks.length === 0 ? (
+                <div className="admin-project-empty">
+                  <i className="bi bi-calendar-check" />
+                  <strong>No task activity for today</strong>
+                  <span>Tasks assigned or updated today will appear here.</span>
+                </div>
+              ) : (
+                <div className="admin-task-mrt-wrap">
+                  <MaterialReactTable
+                    columns={taskReportColumns}
+                    data={todaysTasks}
+                    getRowId={(row) => String(row.id)}
+                    {...taskMrtStyleProps}
+                  />
+                </div>
+              )}
+            </section>
+
+{/* Overall Task Statistics */}
+<section className="admin-task-report-panel admin-task-overall-stats">
+  <div className="admin-task-report-heading">
+    <div>
+      <h6>Overall Task Statistics</h6>
+      <p>
+        Complete task counts, including today's and all previous tasks.
+      </p>
+    </div>
+  </div>
+
+  <div className="row g-3">
+     <div className="col-sm-6 col-xl-3">
+    <div className="admin-project-stat">
+      <span>Total Assigned Projects</span>
+      <strong>{allProjectsCount}</strong>
+      <i className="bi bi-kanban" />
+    </div>
+  </div>
+    <div className="col-sm-6 col-xl-3">
+      <div className="admin-project-stat">
+        <span>Total Assigned Tasks</span>
+        <strong>{allAssignedTasks}</strong>
+        <i className="bi bi-person-check" />
+      </div>
+    </div>
+
+    <div className="col-sm-6 col-xl-3">
+      <div className="admin-project-stat">
+        <span>Total Pending Tasks</span>
+        <strong>{allPendingTasks}</strong>
+        <i className="bi bi-hourglass-split" />
+      </div>
+    </div>
+
+    <div className="col-sm-6 col-xl-3">
+      <div className="admin-project-stat">
+        <span>Total Completed Tasks</span>
+        <strong>{allCompletedTasks}</strong>
+        <i className="bi bi-check2-circle" />
+      </div>
+    </div>
+
+    
+  </div>
+</section>
+            
+
+            <section className="admin-task-report-panel">
+              <div className="admin-task-report-heading admin-task-history-heading">
+                <div>
+                  <h6>Previous Task History</h6>
+                  <p>Earlier task activity. Filter the history by date range.</p>
+                </div>
+                <div className="admin-task-history-filters">
+                  <label>
+                    <span>From</span>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={historyFrom}
+                      max={historyTo || todayKey}
+                      onChange={(event) => setHistoryFrom(event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>To</span>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={historyTo}
+                      min={historyFrom || undefined}
+                      max={todayKey}
+                      onChange={(event) => setHistoryTo(event.target.value)}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="btn admin-project-secondary admin-task-filter-clear"
+                    onClick={() => {
+                      setHistoryFrom("");
+                      setHistoryTo("");
+                    }}
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button"
+                    className="btn admin-project-refresh"
+                    onClick={loadModuleData}
+                    disabled={loading}
+                    aria-label="Refresh previous task history"
+                  >
+                    <i className="bi bi-arrow-clockwise" />
+                  </button>
+                </div>
+              </div>
+
+              {previousTasks.length === 0 ? (
+                <div className="admin-project-empty">
+                  <i className="bi bi-clock-history" />
+                  <strong>No previous task history found</strong>
+                  <span>Choose a different date range or check back when earlier task activity is available.</span>
+                </div>
+              ) : (
+                <div className="admin-task-mrt-wrap">
+                  <MaterialReactTable
+                    columns={taskReportColumns}
+                    data={previousTasks}
+                    getRowId={(row) => String(row.id)}
+                    {...taskMrtStyleProps}
+                  />
+                </div>
+              )}
+            </section>
           </div>
         )}
       </div>
     </section>
+
+    
   );
 }
+
 
 export default AdminProjectsTasks;

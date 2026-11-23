@@ -66,7 +66,7 @@
   overflow: hidden;
   background: var(--navy-light);
   border: 1px solid rgba(89, 242, 254, 0.17);
-  border-left: 3px solid var(--cyan);
+  border: 3px solid var(--cyan);
   border-radius: 13px;
 }
 
@@ -88,7 +88,7 @@
   position: absolute;
   top: 23px;
   right: 19px;
-  color: rgba(89, 242, 254, 0.28);
+  color:white;
   font-size: 28px;
 }
 
@@ -567,5 +567,263 @@
 
   .admin-project-primary {
     width: 100%;
+  }
+}
+
+
+/* =========================================
+   ADMIN TASK REPORTS - TODAY + HISTORY
+========================================= */
+
+.admin-project-dismissible {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.admin-project-alert-close {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  color: currentColor;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 7px;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-project-alert-close:hover {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-task-report-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 20px;
+}
+
+.admin-task-report-panel {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--navy);
+  border: 1px solid rgba(89, 242, 254, 0.18);
+  border-radius: 13px;
+}
+
+.admin-task-report-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 17px 18px;
+  border-bottom: 1px solid rgba(165, 186, 200, 0.14);
+}
+
+.admin-task-report-heading h6 {
+  margin: 0 0 5px;
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.admin-task-report-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-task-history-filters {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.admin-task-history-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 135px;
+  margin: 0;
+}
+
+.admin-task-history-filters label span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.admin-task-history-filters .form-control {
+  min-height: 39px;
+  color: var(--white);
+  color-scheme: dark;
+  background: var(--navy-light);
+  border: 1px solid rgba(165, 186, 200, 0.3);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.admin-task-history-filters .form-control:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 0.2rem rgba(89, 242, 254, 0.13);
+}
+
+.admin-task-filter-clear {
+  min-height: 39px;
+  padding: 7px 12px;
+}
+
+.admin-task-mrt-table {
+  min-width: 1120px;
+}
+
+.admin-task-mrt-table td.admin-task-employee-update {
+  min-width: 220px;
+  max-width: 340px;
+  color: var(--white);
+  white-space: normal;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.admin-task-mrt-table td.admin-task-employee-update:empty::after {
+  content: "No employee update submitted.";
+  color: var(--muted);
+}
+
+/* Task status colors: Completed green, In Progress orange,
+   On Hold red, Pending yellow */
+
+.admin-task-status-select.completed {
+  color: #8be9b0;
+  border-color: rgba(34, 197, 94, 0.55);
+  background-color: rgba(34, 197, 94, 0.10);
+}
+
+.admin-task-status-select.in-progress {
+  color: #ffc477;
+  border-color: rgba(249, 115, 22, 0.6);
+  background-color: rgba(249, 115, 22, 0.10);
+}
+
+.admin-task-status-select.on-hold {
+  color: #ff9999;
+  border-color: rgba(239, 68, 68, 0.6);
+  background-color: rgba(239, 68, 68, 0.10);
+}
+
+.admin-task-status-select.pending {
+  color: #ffdf83;
+  border-color: rgba(234, 179, 8, 0.55);
+  background-color: rgba(234, 179, 8, 0.10);
+}
+
+@media (max-width: 767px) {
+  .admin-task-report-sections {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .admin-task-report-heading {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 14px;
+  }
+
+  .admin-task-history-filters {
+    width: 100%;
+  }
+
+  .admin-task-history-filters label {
+    flex: 1 1 130px;
+  }
+
+  .admin-task-filter-clear {
+    flex: 1 1 auto;
+  }
+}
+
+/* Material React Table styling for task reports (matches Admin Attendance MRT) */
+.admin-task-mrt-wrap {
+  min-width: 0;
+  padding: 8px 18px 18px;
+}
+
+.admin-task-mrt-paper {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-task-mrt-paper .MuiTableContainer-root {
+  background: var(--navy-light);
+  overflow-x: auto;
+}
+
+.admin-task-mrt-paper .MuiTableCell-root {
+  border-color: rgba(165, 186, 200, 0.15);
+}
+
+.admin-task-mrt-paper .MuiTableSortLabel-root,
+.admin-task-mrt-paper .MuiIconButton-root,
+.admin-task-mrt-paper .MuiSvgIcon-root {
+  color: var(--cyan);
+}
+
+.admin-task-mrt-paper .MuiInputBase-root,
+.admin-task-mrt-paper .MuiInputBase-input,
+.admin-task-mrt-paper .MuiTablePagination-root,
+.admin-task-mrt-paper .MuiTablePagination-selectLabel,
+.admin-task-mrt-paper .MuiTablePagination-displayedRows {
+  color: var(--white);
+}
+
+.admin-task-mrt-paper .MuiFormLabel-root,
+.admin-task-mrt-paper .MuiInputLabel-root {
+  color: var(--muted);
+}
+
+.admin-task-mrt-paper .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(165, 186, 200, 0.3);
+}
+
+.admin-task-mrt-paper .MuiTableBody-root .MuiTableRow-root:hover .MuiTableCell-root {
+  background-color: var(--teal);
+  color: var(--white);
+}
+
+.admin-task-mrt-paper .admin-task-mrt-task-name strong,
+.admin-task-mrt-paper .admin-task-mrt-task-name small,
+.admin-task-mrt-paper .admin-task-mrt-employee strong,
+.admin-task-mrt-paper .admin-task-mrt-employee small {
+  display: block;
+}
+
+.admin-task-mrt-paper .admin-task-mrt-task-name small,
+.admin-task-mrt-paper .admin-task-mrt-employee small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.admin-task-mrt-paper .admin-task-employee-update {
+  min-width: 220px;
+  max-width: 340px;
+  color: var(--white);
+  white-space: normal;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .admin-task-mrt-wrap {
+    padding: 8px 10px 14px;
   }
 }

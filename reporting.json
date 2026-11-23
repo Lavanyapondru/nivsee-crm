@@ -222,16 +222,25 @@
       "date": "2026-11-21",
       "checkIn": 1795233195388,
       "checkInTime": "09:23 AM",
-      "checkOut": null,
-      "checkOutTime": null,
+      "checkOut": 1795262584855,
+      "checkOutTime": "05:33 PM",
       "breaks": [
         {
           "start": 1795259995176,
           "end": 1795260018723
         }
       ],
-      "report": null,
-      "reportSubmitted": false,
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a`",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795262574788,
+        "submittedTime": "05:32 PM"
+      },
+      "reportSubmitted": true,
       "id": "nZpfL7rP2Sg"
     },
     {
@@ -241,11 +250,20 @@
       "date": "2026-11-21",
       "checkIn": 1795238367055,
       "checkInTime": "10:49 AM",
-      "checkOut": null,
-      "checkOutTime": null,
+      "checkOut": 1795261765025,
+      "checkOutTime": "05:19 PM",
       "breaks": [],
-      "report": null,
-      "reportSubmitted": false,
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "a",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795261758606,
+        "submittedTime": "05:19 PM"
+      },
+      "reportSubmitted": true,
       "id": "gagp5QY5-j8"
     },
     {
@@ -269,12 +287,49 @@
       "date": "2026-11-21",
       "checkIn": 1795245710597,
       "checkInTime": "12:51 PM",
+      "checkOut": 1795261886690,
+      "checkOutTime": "05:21 PM",
+      "breaks": [],
+      "report": {
+        "classesConducted": "a",
+        "topicsCovered": "a",
+        "projectsWorked": "a",
+        "tasksCompleted": "aa",
+        "pendingTasks": "a",
+        "remarks": "a",
+        "submittedAt": 1795261850644,
+        "submittedTime": "05:20 PM"
+      },
+      "reportSubmitted": true,
+      "id": "Dk8nHwjdO_c"
+    },
+    {
+      "employeeId": "c0lb2YggQXw",
+      "employeeCode": "",
+      "employeeName": "Lavanya Pondru",
+      "date": "2026-11-23",
+      "checkIn": 1795405702092,
+      "checkInTime": "09:18 AM",
       "checkOut": null,
       "checkOutTime": null,
       "breaks": [],
       "report": null,
       "reportSubmitted": false,
-      "id": "Dk8nHwjdO_c"
+      "id": "CaKnDXpssiA"
+    },
+    {
+      "employeeId": "_bXDqjyI7C8",
+      "employeeCode": "",
+      "employeeName": "Lavanya Pondru",
+      "date": "2026-11-23",
+      "checkIn": 1795407210194,
+      "checkInTime": "09:43 AM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "_qmY5Ivaqvc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

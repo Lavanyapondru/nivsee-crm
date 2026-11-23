@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import EmployeeLeave from "../components/EmployeeLeave";
+import EmployeeTasks from "../components/EmployeeTasks";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LogIn, LogOut, Timer, Hourglass, Coffee, Play, ClipboardList,
@@ -1062,6 +1063,11 @@ const handleLogout = () => {
          employeeName={employeeProfile?.name || session?.name}
         />
         )}
+
+        {/* Employee Tasks Module */}
+{activeModule === "Tasks & Projects" && (
+  <EmployeeTasks employeeId={employeeId} />
+)}
 
           {/* {activeModule === "Leave Management" && (
             <div className="emp-card emp-placeholder">
