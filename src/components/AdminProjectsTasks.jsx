@@ -970,7 +970,7 @@ const allProjectsCount = projects.length;
   <div className="row g-3">
      <div className="col-sm-6 col-xl-3">
     <div className="admin-project-stat">
-      <span>Total Assigned Projects</span>
+      <span>Total Projects</span>
       <strong>{allProjectsCount}</strong>
       <i className="bi bi-kanban" />
     </div>

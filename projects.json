@@ -39,6 +39,20 @@
       "updatedAt": "2026-11-23T06:21:38.269Z",
       "createdBy": "admin@nivsee.com",
       "createdAt": "2026-11-23T06:21:38.269Z"
+    },
+    {
+      "id": "mZr9US90bDQ",
+      "projectName": "A2A",
+      "description": "",
+      "technologies": [],
+      "duration": "",
+      "startDate": "",
+      "endDate": "",
+      "status": "Planning",
+      "projectAdmin": "Nivsee Admin",
+      "updatedAt": "2026-11-23T11:28:13.816Z",
+      "createdBy": "admin@nivsee.com",
+      "createdAt": "2026-11-23T11:28:13.821Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

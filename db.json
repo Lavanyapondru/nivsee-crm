@@ -9,7 +9,7 @@
       "role": "employee",
       "department": "Development",
       "designation": "Frontend Developer",
-      "status": "active",
+      "status": "inactive",
       "employeeDetails": {
         "employeeId": "NVS006",
         "dateOfBirth": "2003-09-26",

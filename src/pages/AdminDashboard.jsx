@@ -138,6 +138,8 @@ const getHistoryStatus = (record) => {
   return "Working";
 };
 
+
+
 function AdminDashboard() {
   const navigate = useNavigate();
 
@@ -282,11 +284,16 @@ const [form, setForm] = useState({
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("nivsee_admin_session");
-    navigate("/login/admin");
-  };
+const handleLogout = () => {
+  // Remove JWT authentication token
+  localStorage.removeItem("nivsee_admin_token");
 
+  // Remove admin session
+  localStorage.removeItem("nivsee_admin_session");
+
+  // Navigate to admin login
+  navigate("/login/admin", { replace: true });
+};
   const menuItems = [
     { name: "Dashboard", icon: "bi-grid" },
     { name: "Employees", icon: "bi-people" },

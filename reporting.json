@@ -330,6 +330,34 @@
       "report": null,
       "reportSubmitted": false,
       "id": "_qmY5Ivaqvc"
+    },
+    {
+      "employeeId": "vO1cTSge3w0",
+      "employeeCode": "",
+      "employeeName": "Jagadeesh",
+      "date": "2026-11-23",
+      "checkIn": 1795431552495,
+      "checkInTime": "04:29 PM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "OS5tMlSPNTQ"
+    },
+    {
+      "employeeId": "M7BsfIXasEg",
+      "employeeCode": "",
+      "employeeName": "Ajit",
+      "date": "2026-11-23",
+      "checkIn": 1795432403876,
+      "checkInTime": "04:43 PM",
+      "checkOut": null,
+      "checkOutTime": null,
+      "breaks": [],
+      "report": null,
+      "reportSubmitted": false,
+      "id": "nHfzgQY-V3M"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -1,12 +1,54 @@
 
-const EMPLOYEE_API = "http://localhost:5000";
-const ADMIN_API = "http://localhost:5001";
-const REPORTING_API = "http://localhost:5002";
-const LEAVE_API = "http://localhost:5003";
-const PROJECT_API = "http://localhost:5004";
-const TASK_API = "http://localhost:5005";
+const EMPLOYEE_API = "http://192.168.0.100:5000";
+const ADMIN_API = "http://192.168.0.100:5001";
+const REPORTING_API = "http://192.168.0.100:5002";
+const LEAVE_API = "http://192.168.0.100:5003";
+const PROJECT_API = "http://192.168.0.100:5004";
+const TASK_API = "http://192.168.0.100:5005";
+// New Node.js backend
+
+const API_URL = import.meta.env.VITE_API_URL;
+const AUTH_API = `${API_URL}/api/auth`;
 
 export const api = {
+
+// Admin login using Node.js + MySQL + JWT
+adminLogin: async (email, password) => {
+  const response = await fetch(`${AUTH_API}/admin-login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Admin login failed");
+  }
+
+  return data;
+},
+
+// Get protected admin dashboard
+getAdminDashboard: async (token) => {
+  const response = await fetch(`${AUTH_API}/admin-dashboard`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to access admin dashboard");
+  }
+
+  return data;
+},
+
   // Employee login: email, employee ID or phone
   getEmployees: async (loginValue) => {
     const value = loginValue.trim().toLowerCase();

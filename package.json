@@ -7,12 +7,12 @@
     "dev": "vite --host",
     "build": "vite build",
     "lint": "oxlint",
-    "server": "json-server --watch db.json --port 5000",
-    "server:admins": "json-server admins.json --port 5001",
-    "server:attendance": "json-server reporting.json --port 5002",
-    "server:leaves": "json-server leaves.json --port 5003",
-    "server:projects" : "json-server projects.json --port 5004",
-    "server:tasks" : "json-server tasks.json --port 5005",
+"server": "json-server --watch db.json --host 0.0.0.0 --port 5000",
+    "server:admins": "json-server admins.json --host 0.0.0.0 --port 5001",
+    "server:attendance": "json-server reporting.json --host 0.0.0.0 --port 5002",
+    "server:leaves": "json-server leaves.json --host 0.0.0.0 --port 5003",
+    "server:projects" : "json-server projects.json --host 0.0.0.0 --port 5004",
+    "server:tasks" : "json-server tasks.json --host 0.0.0.0 --port 5005",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -44,6 +44,7 @@ function Login() {
   // Login form validation
   
 
+
 const handleLogin = async (e) => {
   e.preventDefault();
 
@@ -55,68 +56,84 @@ const handleLogin = async (e) => {
   try {
     const isEmployee = role === "employee";
 
-    const users = isEmployee
-      ? await api.getEmployees(email)
-      : await api.getAdmins(email.trim().toLowerCase());
+    // EMPLOYEE LOGIN — keep the existing API
+    if (isEmployee) {
+      const users = await api.getEmployees(email);
 
-    // Step 1: Validate login details and password
-    const user = users.find(
-      (item) => item.password === password
+      const user = users.find(
+        (item) => item.password === password
+      );
+
+      if (!user) {
+        setMessage("Invalid login details or password.");
+        return;
+      }
+
+      if (user.status !== "active") {
+        setMessage(
+          "Your account is currently inactive. Please contact your administrator."
+        );
+        return;
+      }
+
+      localStorage.setItem("nivsee_employee_id", user.id);
+
+      const session = {
+        role: user.role,
+        email: user.email,
+        employeeId: user.id,
+        name: user.name,
+        loggedInAt: Date.now()
+      };
+
+      localStorage.setItem(
+        "nivsee_employee_session",
+        JSON.stringify(session)
+      );
+
+      navigate("/employee/dashboard");
+      return;
+    }
+
+    // ADMIN LOGIN — new Node.js + MySQL API
+    const data = await api.adminLogin(
+      email.trim().toLowerCase(),
+      password
     );
 
-    if (!user) {
-      console.log(user)
-      setMessage("Invalid login details or password.");
-      return;
-    }
+    // Save JWT token
+    localStorage.setItem("nivsee_admin_token", data.token);
 
-    // Step 2: Check employee access permission
-    if (isEmployee && user.status !== "active") {
-      setMessage(
-        "Your account is currently inactive. Please contact your administrator to get login access."
-      );
-      return;
-    }
-
-    // Step 3: Check admin account status
-    if (!isEmployee && user.status !== "active") {
-      setMessage("Your admin account is inactive.");
-      return;
-    }
-    
-    // Store Employee's unique JSON Server ID
-    if (isEmployee) {
-    localStorage.setItem("nivsee_employee_id", user.id);
-    }
-
-    // Step 4: Create login session
+    // Save admin session details
     const session = {
-      role: user.role,
-      email: user.email,
-      employeeId: user.id,
-      name: user.name,
+      role: data.admin.role,
+      email: data.admin.email,
+      name: data.admin.name,
       loggedInAt: Date.now()
     };
 
     localStorage.setItem(
-      isEmployee
-        ? "nivsee_employee_session"
-        : "nivsee_admin_session",
+      "nivsee_admin_session",
       JSON.stringify(session)
     );
 
-    // Step 5: Navigate to dashboard
-    navigate(
-      isEmployee
-        ? "/employee/dashboard"
-        : "/admin/dashboard"
-    );
+    // Verify token by accessing protected dashboard API
+    await api.getAdminDashboard(data.token);
+
+    // Navigate to existing admin dashboard
+    navigate("/admin/dashboard");
 
   } catch (error) {
     console.error("Login error:", error);
 
+    // Remove token if admin authentication failed
+    if (role === "admin") {
+      localStorage.removeItem("nivsee_admin_token");
+      localStorage.removeItem("nivsee_admin_session");
+    }
+
     setMessage(
-      "Unable to connect to the server. Please try again."
+      error.message || "Unable to connect to the server. Please try again."
     );
   }
 };

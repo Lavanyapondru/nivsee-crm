@@ -71,6 +71,18 @@
       "status": "Approved",
       "id": "TjmLjUH5LYI",
       "updatedDate": "2026-11-23"
+    },
+    {
+      "employeeRecordId": "vO1cTSge3w0",
+      "employeeId": "NVS002",
+      "employeeName": "Jagadeesh",
+      "fromDate": "2026-11-28",
+      "toDate": "2026-11-28",
+      "reason": "Election",
+      "appliedDate": "2026-11-23",
+      "status": "Cancelled",
+      "id": "w2GNRR32KOQ",
+      "updatedDate": "2026-11-23"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
