@@ -1,0 +1,656 @@
+
+.employee-profile-page {
+  width: 100%;
+  padding: 8px 3px 25px;
+  color: var(--white);
+  animation: profileFadeIn 0.4s ease;
+}
+
+.profile-top-heading {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.profile-top-heading h3 {
+  margin: 0;
+  font-weight: 750;
+}
+
+.profile-back-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 13px;
+  color: var(--cyan);
+  text-decoration: none;
+  border: 1px solid rgba(89, 242, 254, 0.3);
+  border-radius: 9px;
+  transition: 0.25s ease;
+}
+
+.profile-back-btn:hover {
+  color: var(--navy);
+  background: var(--cyan);
+  transform: translateY(-2px);
+}
+
+/* Employee photo card */
+
+.profile-person-card {
+  height: 100%;
+  padding: 17px;
+  text-align: center;
+  background: var(--navy-light);
+  border: 1px solid rgba(89, 242, 254, 0.16);
+  border-radius: 14px;
+  transition: 0.25s ease;
+}
+
+.profile-person-card:hover,
+.profile-info-card:hover,
+.profile-modules-card:hover {
+  border-color: rgba(89, 242, 254, 0.5);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.13);
+  transform: translateY(-3px);
+}
+
+
+
+/* Employee photo container */
+.profile-photo-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 260px;
+    height: 260px;
+    margin: 0 auto 14px;
+    overflow: hidden;
+    border-radius: 11px;
+}
+
+/* Fixed-size employee profile image */
+.profile-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 11px;
+    border: 1px solid rgba(89, 242, 254, 0.2);
+}
+
+/* Placeholder when photo is unavailable */
+.profile-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: rgba(89, 242, 254, 0.08);
+    border-radius: 11px;
+    color: var(--cyan);
+    font-size: 5rem;
+}
+
+
+.profile-active-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 12px;
+  color: #073d27;
+  background: #6df0b1;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.profile-active-badge.inactive {
+  color: #ffffff;
+  background: #d97757;
+}
+
+.profile-person-card h4 {
+  margin-bottom: 3px;
+  font-weight: 750;
+}
+
+.profile-code {
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.profile-designation {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.profile-department-badge {
+  display: inline-block;
+  padding: 6px 13px;
+  color: var(--cyan);
+  background: rgba(89, 242, 254, 0.1);
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.profile-contact-list {
+  margin: 15px 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(165, 186, 200, 0.15);
+  text-align: left;
+}
+
+.profile-contact-list p {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 11px;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.profile-contact-list i {
+  color: var(--cyan);
+  font-size: 1rem;
+}
+
+.profile-edit-btn {
+  width: 100%;
+  padding: 10px;
+  color: #ffffff;
+  background: #1265ed;
+  border-radius: 9px;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.profile-edit-btn:hover {
+  color: #ffffff;
+  background: #0754d5;
+  transform: translateY(-2px);
+}
+
+/* Compact information cards */
+
+.profile-info-card {
+  height: 100%;
+  min-height: 180px;
+  padding: 17px;
+  background: var(--navy-light);
+  border: 1px solid rgba(89, 242, 254, 0.16);
+  border-radius: 13px;
+  transition: 0.25s ease;
+}
+
+.profile-info-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.profile-info-heading h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.profile-info-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.profile-info-icon.personal {
+  color: #69a9ff;
+  background: rgba(54, 135, 255, 0.15);
+}
+
+.profile-info-icon.contact {
+  color: #54dca0;
+  background: rgba(54, 220, 160, 0.13);
+}
+
+.profile-info-icon.work {
+  color: #bb8aff;
+  background: rgba(173, 115, 255, 0.15);
+}
+
+.profile-info-icon.identity {
+  color: #ffbd67;
+  background: rgba(255, 167, 67, 0.14);
+}
+
+.profile-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-info-row {
+  display: grid;
+  grid-template-columns: minmax(95px, 0.8fr) minmax(0, 1.2fr);
+  gap: 8px;
+  align-items: start;
+  font-size: 0.82rem;
+}
+
+.profile-info-row span {
+  color: var(--muted);
+}
+
+.profile-info-row strong {
+  color: var(--white);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Employee module tabs */
+
+.profile-modules-card {
+  margin-top: 18px;
+  overflow: hidden;
+  background: var(--navy-light);
+  border: 1px solid rgba(89, 242, 254, 0.16);
+  border-radius: 13px;
+  transition: 0.25s ease;
+}
+
+.profile-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 10px 10px 0;
+  border-bottom: 1px solid rgba(165, 186, 200, 0.15);
+}
+
+.profile-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 15px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 9px 9px 0 0;
+  font-weight: 600;
+  font-size: 0.87rem;
+  transition: 0.2s ease;
+}
+
+.profile-tab:hover {
+  color: var(--cyan);
+  background: rgba(89, 242, 254, 0.08);
+}
+
+.profile-tab.active {
+  color: #ffffff;
+  background: #1265ed;
+  box-shadow: 0 3px 12px rgba(18, 101, 237, 0.2);
+}
+
+.profile-tab-content {
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 15px;
+  text-align: center;
+  animation: profileFadeIn 0.3s ease;
+}
+
+.profile-coming-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 10px;
+  color: var(--cyan);
+  background: rgba(89, 242, 254, 0.1);
+  border-radius: 13px;
+  font-size: 1.4rem;
+}
+
+.profile-tab-content h5 {
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.profile-tab-content p {
+  color: var(--muted);
+  margin-bottom: 10px;
+  font-size: 0.88rem;
+}
+
+.profile-tab-content > span {
+  color: var(--cyan);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Loading and error */
+
+.employee-profile-state {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+@keyframes profileFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 767px) {
+  .profile-top-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-photo,
+  .profile-photo-placeholder {
+    height: 260px;
+  }
+
+  .profile-info-card {
+    min-height: auto;
+  }
+
+  .profile-tabs {
+    gap: 4px;
+  }
+
+  .profile-tab {
+    padding: 9px 10px;
+    font-size: 0.78rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .employee-profile-page,
+  .profile-person-card,
+  .profile-info-card,
+  .profile-modules-card,
+  .profile-tab-content {
+    animation: none;
+    transition: none;
+  }
+}
+.employee-profile-photo {
+    width: 100%;
+    max-width: 260px;
+    height: 260px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: 4px;
+    margin: 0 auto;
+}
+
+/* Smaller photo only in Edit Profile mode */
+.employee-edit-photo {
+    width: 100px !important;
+    height: 100px !important;
+    max-width: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+/* =====================================
+   EMPLOYEE ATTENDANCE SECTION
+===================================== */
+
+.employee-attendance-section {
+    width: 100%;
+    padding: 25px;
+    color: #ffffff;
+}
+
+/* Section headings */
+.employee-attendance-section h5 {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 15px 0 18px;
+}
+
+/* Table wrapper */
+.employee-attendance-section .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 30px;
+    border: 1px solid #24536a;
+    border-radius: 10px;
+}
+
+/* Attendance tables */
+.employee-attendance-section table {
+    width: 100%;
+    min-width: 650px;
+    margin-bottom: 0;
+    border-collapse: collapse;
+    background-color: #0d3043;
+    color: #ffffff;
+}
+
+/* Table heading */
+.employee-attendance-section table thead th {
+    background-color: #16465d;
+    color: #48d9ee;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 15px;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid #24536a;
+}
+
+/* Table body */
+.employee-attendance-section table tbody td {
+    background-color: #0d3043;
+    color: #e5f2f8;
+    font-size: 14px;
+    padding: 14px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #24536a;
+}
+
+/* Hover effect */
+.employee-attendance-section table tbody tr:hover td {
+    background-color: #16465d;
+    transition: background-color 0.2s ease;
+}
+
+/* Attendance status */
+.employee-attendance-section .badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: #07566a !important;
+    color: #48e3f2 !important;
+}
+
+/* Empty attendance message */
+.employee-attendance-section table tbody td[colspan] {
+    color: #9bb8c8;
+    padding: 22px;
+    font-style: italic;
+}
+
+/* Loading and error messages */
+.employee-attendance-section p {
+    color: #b7cfdd;
+    font-size: 14px;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    .employee-attendance-section {
+        padding: 12px;
+    }
+
+    .employee-attendance-section h5 {
+        font-size: 16px;
+    }
+}
+/* Attendance tab - dark background */
+.profile-tab-content {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Material React Table dark theme */
+.profile-tab-content .MuiPaper-root {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+.profile-tab-content .MuiTableCell-root {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+  border-color: #333333 !important;
+}
+
+.profile-tab-content .MuiTableHead-root .MuiTableCell-root {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+.profile-tab-content .MuiSvgIcon-root {
+  color: #ffffff;
+}
+
+.profile-tab-content .MuiInputBase-input {
+  color: #ffffff !important;
+}
+
+
+/* Attendance MRT dark background */
+.employee-attendance-section .MuiPaper-root {
+    background: #000000 !important;
+    color: #ffffff !important;
+}
+
+.employee-attendance-section .MuiToolbar-root {
+    background: #000000 !important;
+    color: #ffffff !important;
+}
+
+.employee-attendance-section .MuiTableContainer-root {
+    background: #000000 !important;
+}
+
+.employee-attendance-section .MuiTablePagination-root {
+    background: #000000 !important;
+    color: #ffffff !important;
+}
+
+.employee-attendance-section .MuiTablePagination-selectLabel,
+.employee-attendance-section .MuiTablePagination-displayedRows {
+    color: #ffffff !important;
+}
+
+.employee-attendance-section .MuiSvgIcon-root,
+.employee-attendance-section .MuiIconButton-root {
+    color: #ffffff !important;
+}
+
+/* =========================================
+   FIX: MATERIAL REACT TABLE BLACK THEME
+   Employee Profile - Attendance Only
+========================================= */
+
+/* Main MRT card */
+.employee-attendance-section .MuiPaper-root {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
+    box-shadow: none !important;
+}
+
+/* Top toolbar and its internal containers */
+.employee-attendance-section .MuiPaper-root .MuiToolbar-root,
+.employee-attendance-section .MuiPaper-root .MuiTopToolbar-root,
+.employee-attendance-section .MuiPaper-root > .MuiBox-root,
+.employee-attendance-section .MuiPaper-root .MuiToolbar-root > .MuiBox-root {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+/* Table container */
+.employee-attendance-section .MuiTableContainer-root {
+    background-color: #000000 !important;
+}
+
+/* Table header */
+.employee-attendance-section .MuiTableHead-root .MuiTableCell-root {
+    background-color: #202020 !important;
+    color: #ffffff !important;
+}
+
+/* Table rows */
+.employee-attendance-section .MuiTableBody-root .MuiTableCell-root {
+    background-color: #111111 !important;
+    color: #ffffff !important;
+}
+
+/* Bottom toolbar and pagination */
+.employee-attendance-section .MuiTablePagination-root,
+.employee-attendance-section .MuiBottomToolbar-root,
+.employee-attendance-section .MuiPaper-root > .MuiBox-root:last-child {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+/* Sorting arrows, icons and buttons */
+.employee-attendance-section .MuiSvgIcon-root,
+.employee-attendance-section .MuiIconButton-root {
+    color: #ffffff !important;
+}
+
+/* Pagination labels */
+.employee-attendance-section .MuiTablePagination-selectLabel,
+.employee-attendance-section .MuiTablePagination-displayedRows {
+    color: #ffffff !important;
+}
+
+/* Dropdown and input text */
+.employee-attendance-section .MuiInputBase-input,
+.employee-attendance-section .MuiSelect-select,
+.employee-attendance-section .MuiInputLabel-root {
+    color: #ffffff !important;
+}
+
+/* Sorting labels */
+.employee-attendance-section .MuiTableSortLabel-root,
+.employee-attendance-section .MuiTableSortLabel-icon {
+    color: #ffffff !important;
+}
+
+/* Hover */
+.employee-attendance-section .MuiTableBody-root .MuiTableRow-root:hover .MuiTableCell-root {
+    background-color: #252525 !important;
+}

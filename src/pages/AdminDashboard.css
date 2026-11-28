@@ -347,3 +347,25 @@
   border-radius: 20px;
   font-weight: 600;
 }
+.employee-id-link {
+  color: var(--cyan);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.employee-id-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+.employee-id-link {
+    color: #48d9ee;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.employee-id-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}

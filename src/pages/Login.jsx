@@ -56,44 +56,50 @@ const handleLogin = async (e) => {
   try {
     const isEmployee = role === "employee";
 
-    // EMPLOYEE LOGIN — keep the existing API
-    if (isEmployee) {
-      const users = await api.getEmployees(email);
+    
+// EMPLOYEE LOGIN — Node.js + MySQL + JWT
+if (isEmployee) {
+    // Send login details to the backend
+    const data = await api.employeeLogin(
+        email.trim(),
+        password
+    );
 
-      const user = users.find(
-        (item) => item.password === password
-      );
+    // Store employee JWT token
+    localStorage.setItem(
+        "nivsee_employee_token",
+        data.token
+    );
 
-      if (!user) {
-        setMessage("Invalid login details or password.");
-        return;
-      }
-
-      if (user.status !== "active") {
-        setMessage(
-          "Your account is currently inactive. Please contact your administrator."
-        );
-        return;
-      }
-
-      localStorage.setItem("nivsee_employee_id", user.id);
-
-      const session = {
-        role: user.role,
-        email: user.email,
-        employeeId: user.id,
-        name: user.name,
+    // Store employee session for the existing dashboard
+    const session = {
+        role: data.employee.role,
+        email: data.employee.email,
+        employeeId: data.employee.id,
+        employeeCode: data.employee.employeeCode,
+        name: data.employee.name,
+        phone: data.employee.phone,
         loggedInAt: Date.now()
-      };
+    };
 
-      localStorage.setItem(
+    localStorage.setItem(
         "nivsee_employee_session",
         JSON.stringify(session)
-      );
+    );
 
-      navigate("/employee/dashboard");
-      return;
-    }
+    localStorage.setItem(
+        "nivsee_employee_id",
+        data.employee.id
+    );
+
+    // Verify the protected employee dashboard API
+    await api.getEmployeeDashboard(data.token);
+
+    // Navigate to the existing employee dashboard
+    navigate("/employee/dashboard");
+    return;
+}
+
 
     // ADMIN LOGIN — new Node.js + MySQL API
     const data = await api.adminLogin(
@@ -123,15 +129,21 @@ const handleLogin = async (e) => {
     // Navigate to existing admin dashboard
     navigate("/admin/dashboard");
 
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Login error:", error);
 
-    // Remove token if admin authentication failed
-    if (role === "admin") {
-      localStorage.removeItem("nivsee_admin_token");
-      localStorage.removeItem("nivsee_admin_session");
-    }
+  // Clean up the session if authentication fails
+if (role === "admin") {
+    localStorage.removeItem("nivsee_admin_token");
+    localStorage.removeItem("nivsee_admin_session");
+}
 
+if (role === "employee") {
+    localStorage.removeItem("nivsee_employee_token");
+    localStorage.removeItem("nivsee_employee_session");
+    localStorage.removeItem("nivsee_employee_id");
+}
     setMessage(
       error.message || "Unable to connect to the server. Please try again."
     );
@@ -251,12 +263,12 @@ const handleLogin = async (e) => {
                   <div className="auth-input">
                     <i className="bi bi-envelope"></i>
 
-                    <input
-                      type="text"
-                      placeholder="Enter email or phone number"   
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
+                <input
+    type="text"
+    placeholder="Enter email, employee ID or phone number"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+/>
                   </div>
 
                   {/* Password */}

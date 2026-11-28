@@ -184,22 +184,25 @@ useEffect(() => {
   }
 
   const loadEmployeeProfile = async () => {
-    try {
-      setProfileLoading(true);
-      const employees = await api.getAllEmployees();
-      const employeeList = Array.isArray(employees) ? employees : [];
-      const currentEmployee = employeeList.find(
-        (employee) => String(employee.id) === String(employeeId)
-      );
+try {
+    setProfileLoading(true);
 
-      setEmployeeProfile(currentEmployee || null);
-    } catch (error) {
-      console.error("Employee profile loading error:", error);
-      setEmployeeProfile(null);
-      showToast("warn", "Unable to load employee profile.");
-    } finally {
-      setProfileLoading(false);
-    }
+    // Fetch employee profile using Employee JWT
+    const currentEmployee = await api.getMyEmployeeProfile();
+
+    // Save employee profile
+    setEmployeeProfile(currentEmployee || null);
+
+} catch (error) {
+    console.error("Employee profile loading error:", error);
+
+    setEmployeeProfile(null);
+
+    showToast("warn", "Unable to load employee profile.");
+
+} finally {
+    setProfileLoading(false);
+}
   };
 
   loadEmployeeProfile();
@@ -470,10 +473,13 @@ await updateToday({
   }
 };
 const handleLogout = () => {
-  localStorage.removeItem(SESSION_KEY);
-  localStorage.removeItem("nivsee_employee_id");
+    // Remove employee authentication data
+    localStorage.removeItem("nivsee_employee_token");
+    localStorage.removeItem("nivsee_employee_session");
+    localStorage.removeItem("nivsee_employee_id");
 
-  navigate("/login/employee");
+    // Navigate to employee login
+    navigate("/login/employee", { replace: true });
 };
 
   const onField = (e) => {
@@ -991,65 +997,195 @@ const handleLogout = () => {
             </motion.div>
           )}
 
-          {activeModule === "My Profile" && (
-            <motion.div
-              className="emp-module-content"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35 }}
-            >
-              <div className="emp-card">
-                <h5 className="emp-card-title"><UserRound size={20} /> Employee Details</h5>
-                {profileLoading ? (
-                  <div className="emp-loading">Loading your profile...</div>
-                ) : employeeProfile ? (
-                  <div className="emp-profile-grid">
-                    <div className="emp-profile-item">
-                      <span>Full Name</span>
-                      <strong>{employeeProfile.name || session.name || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Employee ID</span>
-                      <strong>{employeeProfile.employeeDetails?.employeeId || session.employeeCode || employeeProfile.id || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Email Address</span>
-                      <strong>{employeeProfile.email || session.email || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Phone Number</span>
-                      <strong>{employeeProfile.phone || employeeProfile.employeeDetails?.phone || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Department</span>
-                      <strong>{employeeProfile.department || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Designation</span>
-                      <strong>{employeeProfile.designation || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Date of Birth</span>
-                      <strong>{employeeProfile.employeeDetails?.dateOfBirth || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Blood Group</span>
-                      <strong>{employeeProfile.employeeDetails?.bloodGroup || "--"}</strong>
-                    </div>
-                    <div className="emp-profile-item">
-                      <span>Emergency Contact</span>
-                      <strong>{employeeProfile.employeeDetails?.emergencyContact || "--"}</strong>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="emp-empty">
-                    <UserRound size={34} />
-                    <p>Employee profile could not be found. Please contact your administrator.</p>
-                  </div>
-                )}
+
+{activeModule === "My Profile" && (
+  <motion.div
+    className="emp-module-content"
+    initial={{ opacity: 0, y: 14 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.35 }}
+  >
+    {profileLoading ? (
+      <div className="emp-card emp-loading">
+        Loading employee profile...
+      </div>
+    ) : employeeProfile ? (
+      <>
+        {/* Profile Banner */}
+        <div className="profile-hero">
+          <div className="profile-hero-bg" />
+
+          <div className="profile-hero-content">
+            <div className="profile-avatar">
+              {employeeProfile.photoPath ? (
+                <img
+                  src={`${import.meta.env.VITE_API_URL}/${String(
+                    employeeProfile.photoPath
+                  ).replace(/^\/+/, "")}`}
+                  alt={employeeProfile.name}
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              ) : (
+                <span>
+                  {employeeProfile.name?.charAt(0)?.toUpperCase() || "E"}
+                </span>
+              )}
+            </div>
+
+            <div className="profile-hero-info">
+              <span className="profile-label">EMPLOYEE PROFILE</span>
+              <h2>{employeeProfile.name || "--"}</h2>
+
+              <p>
+                {employeeProfile.designation || "Employee"}
+                {employeeProfile.department &&
+                  ` • ${employeeProfile.department}`}
+              </p>
+
+              <div className="profile-hero-tags">
+                <span>
+                  <i className="bi bi-person-badge" />
+                  {employeeProfile.employeeCode || "--"}
+                </span>
+
+                <span className="profile-active-tag">
+                  <i className="bi bi-circle-fill" />
+                  {employeeProfile.status || "Active"}
+                </span>
               </div>
-            </motion.div>
-          )}
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Summary */}
+        <div className="profile-summary-grid">
+          <div className="profile-summary-card">
+            <div className="profile-summary-icon">
+              <i className="bi bi-envelope" />
+            </div>
+            <div>
+              <span>Email Address</span>
+              <strong>{employeeProfile.email || "--"}</strong>
+            </div>
+          </div>
+
+          <div className="profile-summary-card">
+            <div className="profile-summary-icon">
+              <i className="bi bi-telephone" />
+            </div>
+            <div>
+              <span>Phone Number</span>
+              <strong>{employeeProfile.phone || "--"}</strong>
+            </div>
+          </div>
+        </div>
+
+        {/* Personal Details */}
+        <div className="emp-card profile-details-card">
+          <div className="profile-section-heading">
+            <div className="profile-section-icon">
+              <i className="bi bi-person-vcard" />
+            </div>
+            <div>
+              <h5>Personal Information</h5>
+              <p>Your personal and contact details</p>
+            </div>
+          </div>
+
+          <div className="profile-details-grid">
+            <div className="profile-detail">
+              <span>Full Name</span>
+              <strong>{employeeProfile.name || "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Employee Code</span>
+              <strong>{employeeProfile.employeeCode || "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Email Address</span>
+              <strong>{employeeProfile.email || "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Phone Number</span>
+              <strong>{employeeProfile.phone || "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Date of Birth</span>
+              <strong>{employeeProfile.dateOfBirth
+                ? String(employeeProfile.dateOfBirth).slice(0, 10)
+                : "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Blood Group</span>
+              <strong>{employeeProfile.bloodGroup || "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Emergency Contact</span>
+              <strong>{employeeProfile.emergencyContact || "--"}</strong>
+            </div>
+
+            <div className="profile-detail profile-address">
+              <span>Residential Address</span>
+              <strong>{employeeProfile.address || "--"}</strong>
+            </div>
+          </div>
+        </div>
+
+        {/* Employment Details */}
+        <div className="emp-card profile-details-card">
+          <div className="profile-section-heading">
+            <div className="profile-section-icon">
+              <i className="bi bi-briefcase" />
+            </div>
+            <div>
+              <h5>Employment Information</h5>
+              <p>Your professional and organization details</p>
+            </div>
+          </div>
+
+          <div className="profile-details-grid">
+            <div className="profile-detail">
+              <span>Department</span>
+              <strong>{employeeProfile.department || "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Designation</span>
+              <strong>{employeeProfile.designation || "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Joining Date</span>
+              <strong>{employeeProfile.joiningDate
+                ? String(employeeProfile.joiningDate).slice(0, 10)
+                : "--"}</strong>
+            </div>
+
+            <div className="profile-detail">
+              <span>Account Status</span>
+              <strong className="profile-status-text">
+                {employeeProfile.status || "--"}
+              </strong>
+            </div>
+          </div>
+        </div>
+      </>
+    ) : (
+      <div className="emp-card emp-empty">
+        <i className="bi bi-person-exclamation" />
+        <p>Unable to load your employee profile.</p>
+      </div>
+    )}
+  </motion.div>
+)}
 
           {activeModule === "Leave Management" && (
           <EmployeeLeave

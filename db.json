@@ -1,22 +1,6 @@
 {
   "employees": [
-    {
-      "id": "NVS001",
-      "name": "Employee One",
-      "email": "employee@nivsee.com",
-      "phone": "9515618887",
-      "password": "Employee@123",
-      "role": "employee",
-      "department": "Development",
-      "designation": "Frontend Developer",
-      "status": "inactive",
-      "employeeDetails": {
-        "employeeId": "NVS006",
-        "dateOfBirth": "2003-09-26",
-        "bloodGroup": "B+",
-        "emergencyContact": "8331886887"
-      }
-    },
+    
     {
       "id": "c0lb2YggQXw",
       "name": "Lavanya Pondru",

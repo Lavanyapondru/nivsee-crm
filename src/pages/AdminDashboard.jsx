@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { api } from "../services/api";
 import AdminLeave from "../components/AdminLeave";
 import AdminProjectsTasks from "../components/AdminProjectsTasks";
+import Swal from "sweetalert2";
+import {
+  useParams,
+  useSearchParams
+} from "react-router-dom";
 import "./AdminDashboard.css";
 
 
@@ -143,9 +148,15 @@ const getHistoryStatus = (record) => {
 function AdminDashboard() {
   const navigate = useNavigate();
 
-  const [activeModule, setActiveModule] = useState("Dashboard");
+  // Receive the selected sidebar module from AdminLayout
+  const { activeModule, setActiveModule } = useOutletContext();
   const [employees, setEmployees] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  // Track whether the form is in edit mode
+const [isEditMode, setIsEditMode] = useState(false);
+
+// Store the employee currently being edited
+const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -158,18 +169,23 @@ function AdminDashboard() {
   const [historyDate, setHistoryDate] = useState("");
 
 const [form, setForm] = useState({
-  employeeId: "",
-  name: "",
-  email: "",
-  phone: "",
-  department: "",
-  designation: "",
-  password: "",
-  employeeid: "",
-  dateOfBirth: "",
-  bloodGroup: "",
-  emergencyContact: ""
+    employeeId: "",
+    name: "",
+    email: "",
+    phone: "",
+    department: "",
+    designation: "",
+    password: "",
+    dateOfBirth: "",
+    bloodGroup: "",
+    emergencyContact: "",
+    address: "",
+    joiningDate: "",
+    panNumber: "",
+    aadhaarNumber: "",
+    photo: null
 });
+
 
   // Check admin session
   useEffect(() => {
@@ -214,8 +230,8 @@ const [form, setForm] = useState({
       setAllAttendance(attendanceData);
     } catch (error) {
       console.error("Unable to load attendance data:", error);
-      setAttendanceError("Unable to load attendance records. Please check that the employee and attendance JSON Servers are running.");
-    } finally {
+setAttendanceError(
+    "Unable to load attendance records. Please check the Node.js backend and admin login.");    } finally {
       setAttendanceLoading(false);
     }
   };
@@ -227,156 +243,243 @@ const [form, setForm] = useState({
     }
   }, [activeModule]);
 
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    });
-  };
+  
 
-  // Add employee to JSON Server
-  const handleAddEmployee = async (e) => {
+ const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((previousForm) => ({
+        ...previousForm,
+        [name]: value
+    }));
+};
+
+// Fetch complete employee details and open the edit form
+const handleEditEmployee = async (employee) => {
+    try {
+        // Show loading state
+        setSaving(true);
+        setMessage("");
+
+        // Fetch complete employee details from backend
+        const employeeDetails = await api.getEmployeeById(
+            employee.id
+        );
+
+        // Store selected employee
+        setSelectedEmployee(employeeDetails);
+
+        // Enable edit mode
+        setIsEditMode(true);
+
+        // Fill form with existing employee information
+        setForm({
+            employeeId: employeeDetails.employeeCode || "",
+            name: employeeDetails.name || "",
+            email: employeeDetails.email || "",
+            phone: employeeDetails.phone || "",
+            department: employeeDetails.department || "",
+            designation: employeeDetails.designation || "",
+            password: "",
+
+            dateOfBirth: employeeDetails.dateOfBirth
+                ? String(employeeDetails.dateOfBirth).slice(0, 10)
+                : "",
+
+            bloodGroup: employeeDetails.bloodGroup || "",
+            emergencyContact: employeeDetails.emergencyContact || "",
+            address: employeeDetails.address || "",
+
+           joiningDate: employeeDetails.joiningDate
+              ? String(employeeDetails.joiningDate).slice(0, 10)
+              : "",
+            // Existing identity details from protected API
+            panNumber: employeeDetails.panNumber || "",
+            aadhaarNumber: employeeDetails.aadhaarNumber || "",
+
+            photo: null
+        });
+
+        // Open employee form
+        setShowForm(true);
+
+    } catch (error) {
+        console.error("Fetch Employee Details Error:", error.message);
+        setMessage(error.message || "Unable to load employee details.");
+    } finally {
+        setSaving(false);
+    }
+};
+
+ // Handle employee photo selection
+const handlePhotoChange = (e) => {
+    const selectedPhoto = e.target.files[0];
+
+    // If no file is selected, stop
+    if (!selectedPhoto) return;
+
+    // Update photo in React state
+    setForm((previousForm) => ({
+        ...previousForm,
+        photo: selectedPhoto
+    }));
+};
+
+// Handle both Add Employee and Update Employee
+const handleSubmitEmployee = async (e) => {
     e.preventDefault();
     setMessage("");
 
     try {
-      setSaving(true);
+        setSaving(true);
 
-      const employee = {
-  id: `NVS${Date.now().toString().slice(-6)}`,
-  name: form.name.trim(),
-  email: form.email.trim().toLowerCase(),
-  phone: form.phone.trim(),
-  department: form.department.trim(),
-  designation: form.designation.trim(),
-  password: form.password,
-  role: "employee",
-  status: "active",
+        // Photo is required only when adding a new employee
+        if (!isEditMode && !form.photo) {
+            setMessage("Please select an employee photo.");
+            return;
+        }
 
-  employeeDetails: {
-    employeeId: form.employeeId.trim().toUpperCase(),
-    dateOfBirth: form.dateOfBirth,
-    bloodGroup: form.bloodGroup,
-    emergencyContact: form.emergencyContact.trim()
-  }
-};
+        // Create FormData to send employee details and photo
+        const formData = new FormData();
 
-      await api.addEmployee(employee);
+        formData.append("name", form.name.trim());
+        formData.append("email", form.email.trim().toLowerCase());
+        formData.append("phone", form.phone.trim());
+        formData.append("department", form.department.trim());
+        formData.append("designation", form.designation.trim());
 
+        formData.append("employeeId", form.employeeId.trim());
+        formData.append("dateOfBirth", form.dateOfBirth);
+        formData.append("bloodGroup", form.bloodGroup);
+        formData.append("emergencyContact", form.emergencyContact.trim());
+        // New employee fields
+          formData.append("address", form.address.trim());
+          formData.append("joiningDate", form.joiningDate);
+        formData.append("panNumber", form.panNumber.trim().toUpperCase());
+        formData.append("aadhaarNumber", form.aadhaarNumber.trim());
+
+        // Password is required only when adding an employee
+        if (!isEditMode) {
+            formData.append("password", form.password);
+        }
+
+        // Append photo only if a new photo is selected
+        if (form.photo) {
+            formData.append("photo", form.photo);
+        }
+
+        // Decide whether to Add or Update
+        if (isEditMode) {
+            await api.updateEmployee(selectedEmployee.id, formData);
+            setMessage("Employee updated successfully!");
+        } else {
+            await api.addEmployee(formData);
+            setMessage("Employee added successfully!");
+        }
+
+        // Reset employee form
       setForm({
-        name: "",
-        email: "",
-        phone: "",
-        department: "",
-        designation: "",
-        password: ""
-      });
+    employeeId: "",
+    name: "",
+    email: "",
+    phone: "",
+    department: "",
+    designation: "",
+    password: "",
+    dateOfBirth: "",
+    bloodGroup: "",
+    emergencyContact: "",
+    address: "",
+    joiningDate: "",
+    panNumber: "",
+    aadhaarNumber: "",
+    photo: null
+});
 
-      setShowForm(false);
-      setMessage("Employee added successfully!");
+        setIsEditMode(false);
+        setSelectedEmployee(null);
+        setShowForm(false);
 
-      await loadEmployees();
+        // Refresh employee records
+        await loadEmployees();
+
     } catch (error) {
-      console.error(error);
-      setMessage("Unable to add employee. Please try again.");
+        console.error("Employee Save Error:", error);
+        setMessage(error.message || "Unable to save employee.");
+
     } finally {
-      setSaving(false);
+        setSaving(false);
     }
-  };
-
-const handleLogout = () => {
-  // Remove JWT authentication token
-  localStorage.removeItem("nivsee_admin_token");
-
-  // Remove admin session
-  localStorage.removeItem("nivsee_admin_session");
-
-  // Navigate to admin login
-  navigate("/login/admin", { replace: true });
 };
-  const menuItems = [
-    { name: "Dashboard", icon: "bi-grid" },
-    { name: "Employees", icon: "bi-people" },
-    { name: "Attendance", icon: "bi-clock-history" },
-    { name: "Projects", icon: "bi-kanban" },
-    { name: "Tasks", icon: "bi-list-check" },
-    { name: "Leaves", icon: "bi-calendar-check" },
-    { name: "Reports", icon: "bi-bar-chart" }
-  ];
 
-  const handleToggleEmployeeStatus = async (employee) => {
-  const newStatus =
-    employee.status === "active" ? "inactive" : "active";
 
-  try {
-    setMessage("");
+ 
+const handleToggleEmployeeStatus = async (employee) => {
+    const isActive = employee.status === "active";
 
-    await api.updateEmployee(employee.id, {
-      status: newStatus,
+    const newStatus = isActive ? "inactive" : "active";
+
+    // Ask for confirmation before changing status
+    const result = await Swal.fire({
+        title: isActive
+            ? "Deactivate Employee?"
+            : "Activate Employee?",
+
+        text: isActive
+            ? "Are you sure you want to deactivate this employee?"
+            : "Are you sure you want to activate this employee?",
+
+        icon: "warning",
+
+        showCancelButton: true,
+
+        confirmButtonText: isActive
+            ? "Yes, Deactivate"
+            : "Yes, Activate",
+
+        cancelButtonText: "No, Cancel",
+
+        confirmButtonColor: isActive ? "#dc3545" : "#198754",
+
+        cancelButtonColor: "#6c757d"
     });
 
-    setMessage(
-      `${employee.name} ${
-        newStatus === "active"
-          ? "activated"
-          : "deactivated"
-      } successfully!`
-    );
+    // Stop if admin selects No
+    if (!result.isConfirmed) {
+        return;
+    }
 
-    await loadEmployees();
+    try {
+        // Call dedicated status API
+        await api.updateEmployeeStatus(employee.id, newStatus);
 
-  } catch (error) {
-    console.error(error);
-    setMessage("Unable to update employee status.");
-  }
+        // Refresh employee records
+        await loadEmployees();
+
+        // Show success alert
+        await Swal.fire({
+            title: "Success!",
+            text: isActive
+                ? "Employee has been deactivated."
+                : "Employee has been activated.",
+            icon: "success",
+            confirmButtonColor: "#198754"
+        });
+
+    } catch (error) {
+        console.error("Employee Status Update Error:", error);
+
+        Swal.fire({
+            title: "Update Failed",
+            text: error.message || "Unable to update employee status.",
+            icon: "error"
+        });
+    }
 };
 
+
   return (
-    <div className="container-fluid admin-dashboard">
-      <div className="row min-vh-100">
-
-        {/* Sidebar */}
-        <aside className="col-md-3 col-lg-2 admin-sidebar">
-
-          <h4 className="mb-4">
-            <i className="bi bi-grid-1x2-fill me-2"></i>
-            NIVSEE CRM
-          </h4>
-
-          {/* <p className="text-secondary small">MAIN MENU</p> */}
-
-          {menuItems.map((item) => (
-            <button
-              key={item.name}
-              type="button"
-              onClick={() => {
-                setActiveModule(item.name);
-                setMessage("");
-              }}
-              className={`btn w-100 text-start mb-2 admin-menu-btn ${
-  activeModule === item.name ? "active" : ""
-}`}
-            >
-              <i className={`bi ${item.icon} me-2`}></i>
-              {item.name}
-            </button>
-          ))}
-
-          <hr className="admin-divider" />
-
-          <button
-            type="button"
-            className="btn btn-outline-light w-100"
-            onClick={handleLogout}
-          >
-            <i className="bi bi-box-arrow-right me-2"></i>
-            Logout
-          </button>
-
-        </aside>
-
-        {/* Main Content */}
-        <main className="col-md-9 col-lg-10 admin-main">
+    <div className="admin-dashboard-content">
 
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -447,12 +550,12 @@ const handleLogout = () => {
                 {/* Add Employee Form */}
                 {showForm && (
                   <form
-                    onSubmit={handleAddEmployee}
+                    onSubmit={handleSubmitEmployee}
                     className="admin-form p-3 mb-4"
                   >
-                    <h6 className="fw-bold mb-3 text-light">
-                      New Employee Details
-                    </h6>
+                   <h6 className="fw-bold mb-3 text-light">
+    {isEditMode ? "Edit Employee Details" : "New Employee Details"}
+</h6>
 
                     <div className="row g-3">
 
@@ -466,7 +569,7 @@ const handleLogout = () => {
                           className="form-control"
                           value={form.name}
                           onChange={handleChange}
-                          required
+                          required={!isEditMode}
                         />
                       </div>
 
@@ -480,7 +583,7 @@ const handleLogout = () => {
                           className="form-control"
                           value={form.email}
                           onChange={handleChange}
-                          required
+                         required={!isEditMode}
                         />
                       </div>
 
@@ -494,7 +597,7 @@ const handleLogout = () => {
                           className="form-control"
                           value={form.phone}
                           onChange={handleChange}
-                          required
+                         required={!isEditMode}
                         />
                       </div>
 
@@ -508,7 +611,7 @@ const handleLogout = () => {
                           className="form-control"
                           value={form.department}
                           onChange={handleChange}
-                          required
+                         required={!isEditMode}
                         />
                       </div>
 
@@ -522,38 +625,37 @@ const handleLogout = () => {
                           className="form-control"
                           value={form.designation}
                           onChange={handleChange}
-                          required
+                          required={!isEditMode}
                         />
                       </div>
 
                       <div className="col-md-6">
                         <label className="form-label">
-                          Initial Password
-                        </label>
+    {isEditMode ? "Password (unchanged)" : "Initial Password"}
+</label>
                         <input
                           type="password"
                           name="password"
                           className="form-control"
                           value={form.password}
                           onChange={handleChange}
-                          required
+                          required={!isEditMode}
                         />
                       </div>
 <div className="col-12 mt-5">
   <h6 className="fw-bold text-light mb-2">
     Additional Employee Details
-    <span className="text-light ms-2 small">(Optional)</span>
   </h6>
 
-  <p className="text-info small mb-0">
+  {/* <p className="text-info small mb-0">
     These details can be provided now or updated later.
-  </p>
+  </p> */}
 
   {/* <hr className="border-secondary" /> */}
 </div>
  {/* Employee ID */}
 <div className="col-md-6">
-  <label className="form-label">Employee ID <span className="text-light small">(Optional)</span></label>
+  <label className="form-label">Employee ID</label>
   <input
     type="text"
     name="employeeId"
@@ -561,32 +663,32 @@ const handleLogout = () => {
     placeholder="NVS001"
     value={form.employeeId}
     onChange={handleChange}
-    required
+    required={!isEditMode}
   />
 </div>
 
 {/* Date of Birth */}
 <div className="col-md-6">
-  <label className="form-label">Date of Birth <span className="text-light small">(Optional)</span></label>
+  <label className="form-label">Date of Birth</label>
   <input
     type="date"
     name="dateOfBirth"
     className="form-control"
     value={form.dateOfBirth}
     onChange={handleChange}
-    required
+    required={!isEditMode}
   />
 </div>
 
 {/* Blood Group */}
 <div className="col-md-6">
-  <label className="form-label">Blood Group <span className="text-light small">(Optional)</span></label>
+  <label className="form-label">Blood Group </label>
   <select
     name="bloodGroup"
     className="form-select"
     value={form.bloodGroup}
     onChange={handleChange}
-    required
+    required={!isEditMode}
   >
     <option value="">Select Blood Group</option>
     <option value="A+">A+</option>
@@ -602,7 +704,7 @@ const handleLogout = () => {
 
 {/* Emergency Contact */}
 <div className="col-md-6">
-  <label className="form-label">Emergency Contact Number <span className="text-light small">(Optional)</span></label>
+  <label className="form-label">Emergency Contact Number </label>
   <input
     type="tel"
     name="emergencyContact"
@@ -610,9 +712,93 @@ const handleLogout = () => {
     value={form.emergencyContact}
     onChange={handleChange}
     placeholder="Enter emergency contact"
-    required
+    required={!isEditMode}
   />
 </div>
+
+{/* Address */}
+<div className="col-md-6">
+    <label className="form-label">Address</label>
+    <textarea
+        name="address"
+        className="form-control"
+        placeholder="Enter employee address"
+        rows={3}
+        value={form.address}
+        onChange={handleChange}
+    />
+</div>
+{/* Joining Date */}
+<div className="col-md-6">
+    <label className="form-label">Joining Date</label>
+    <input
+        type="date"
+        name="joiningDate"
+        className="form-control"
+        value={form.joiningDate}
+        onChange={handleChange}
+    />
+</div>
+
+{/* PAN Card Number */}
+<div className="col-md-6">
+    <label className="form-label">PAN Card Number</label>
+    <input
+        type="text"
+        name="panNumber"
+        className="form-control"
+        placeholder="ABCDE1234F"
+        value={form.panNumber}
+        onChange={handleChange}
+        maxLength={10}
+        pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]"
+        title="Enter a valid 10-character PAN number"
+        required={!isEditMode}
+    />
+</div>
+
+{/* Aadhaar Card Number */}
+<div className="col-md-6">
+    <label className="form-label">Aadhaar Card Number</label>
+    <input
+        type="text"
+        name="aadhaarNumber"
+        className="form-control"
+        placeholder="Enter 12-digit Aadhaar number"
+        value={form.aadhaarNumber}
+        onChange={handleChange}
+        maxLength={12}
+        minLength={12}
+        pattern="[0-9]{12}"
+        inputMode="numeric"
+        required={!isEditMode}
+    />
+</div>
+
+{/* Employee Photo */}
+<div className="col-md-6">
+    <label className="form-label">Employee Photo</label>
+    <input
+        type="file"
+        name="photo"
+        className="form-control"
+        accept=".jpg,.jpeg,.png"
+        onChange={handlePhotoChange}
+        required={!isEditMode}
+    />
+
+    {/* Display selected photo filename */}
+    {form.photo && (
+        <small className="text-info mt-2 d-block">
+            Selected: {form.photo.name}
+        </small>
+    )}
+
+    <small className="text-muted">
+        JPG, JPEG or PNG. Maximum size: 2 MB.
+    </small>
+</div>
+
 
                     </div>
 
@@ -622,7 +808,11 @@ const handleLogout = () => {
                         className="btn admin-primary-btn"
                         disabled={saving}
                       >
-                        {saving ? "Saving..." : "Save Employee"}
+                       {saving
+    ? "Saving..."
+    : isEditMode
+        ? "Update Employee"
+        : "Save Employee"}
                       </button>
 
                       <button
@@ -654,12 +844,39 @@ const handleLogout = () => {
                 ) : (
                   <MaterialReactTable
                     columns={[
-                      { accessorKey: "id", header: "Employee ID" },
-                      { accessorKey: "name", header: "Name" },
+{
+  accessorKey: "employeeId",
+  header: "Employee Code",
+  Cell: ({ row, cell }) => {
+    const employeeUuid = row.original.id;
+
+    return (
+      <Link
+        to={`/admin/employees/${employeeUuid}?tab=Attendance`}
+        className="employee-id-link"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {cell.getValue()}
+      </Link>
+    );
+  },
+},                    { accessorKey: "name", header: "Name" },
                       { accessorKey: "email", header: "Email" },
                       { accessorKey: "phone", header: "Phone" },
                       { accessorKey: "department", header: "Department" },
                       { accessorKey: "designation", header: "Designation" },
+                      {
+    accessorKey: "joiningDate",
+    header: "Joining Date",
+    Cell: ({ cell }) => {
+        const value = cell.getValue();
+
+        return value
+            ? new Date(`${String(value).slice(0, 10)}T00:00:00`)
+                .toLocaleDateString("en-IN")
+            : "--";
+    }
+},
                       {
                         accessorKey: "status",
                         header: "Status",
@@ -676,24 +893,42 @@ const handleLogout = () => {
                           );
                         }
                       },
-                      {
-                        id: "action",
-                        header: "Action",
-                        enableSorting: false,
-                        enableColumnFilter: false,
-                        Cell: ({ row }) => {
-                          const employee = row.original;
-                          return (
-                            <button
-                              type="button"
-                              className={`btn btn-sm ${employee.status === "active" ? "btn-danger" : "btn-success"}`}
-                              onClick={() => handleToggleEmployeeStatus(employee)}
-                            >
-                              {employee.status === "active" ? "Deactivate" : "Activate"}
-                            </button>
-                          );
-                        }
-                      }
+                 {
+  id: "action",
+  header: "Action",
+  enableSorting: false,
+  enableColumnFilter: false,
+  Cell: ({ row }) => {
+    const employee = row.original;
+
+    return (
+      <div className="d-flex gap-2">
+        {/* Edit employee details */}
+        <button
+          type="button"
+          className="btn btn-sm btn-primary"
+          onClick={() => handleEditEmployee(employee)}
+        >
+          <i className="bi bi-pencil-square me-1"></i>
+          Edit
+        </button>
+
+        {/* Activate or deactivate employee */}
+        <button
+          type="button"
+          className={`btn btn-sm ${
+            employee.status === "active"
+              ? "btn-danger"
+              : "btn-success"
+          }`}
+        onClick={() => handleToggleEmployeeStatus(row.original)}
+        >
+          {employee.status === "active" ? "Deactivate" : "Activate"}
+        </button>
+      </div>
+    );
+  }
+}
                     ]}
                     data={employees}
                     enableSorting
@@ -858,154 +1093,326 @@ const handleLogout = () => {
                   </div>
                 </div>
 
-                <div className="admin-card p-3 p-md-4 mb-4">
-                  <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-                    <div>
-                      <h5 className="fw-bold mb-1">Today's Employee Attendance</h5>
-                      <p className="admin-muted small mb-0">
-                        {new Date(`${today}T00:00:00`).toLocaleDateString("en-IN", {
-                          day: "2-digit", month: "long", year: "numeric"
-                        })}
-                      </p>
-                    </div>
-                    
-                    {/* <span className="admin-attendance-count">
-                      {todayRows.length} employees
-                    </span> */}
-                     <button
-                    type="button"
-                    className="btn admin-outline-btn"
-                    onClick={loadAttendanceData}
-                    disabled={attendanceLoading}
-                  >
-                    <i className="bi bi-arrow-clockwise me-2"></i>
-                    {attendanceLoading ? "Refreshing..." : "Refresh"}
-                  </button>
-                    
-                  </div>
+{/* ==========================================
+    TODAY'S EMPLOYEE ATTENDANCE
+========================================== */}
 
-                  <div className="mb-3">
-                    <input
-                      type="search"
-                      className="form-control admin-attendance-search"
-                      placeholder="Search by employee name, ID or department..."
-                      value={attendanceSearch}
-                      onChange={(event) => setAttendanceSearch(event.target.value)}
-                    />
-                  </div>
+<div className="admin-card p-3 p-md-4 mb-4">
+  <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+    <div>
+      <h5 className="fw-bold mb-1">Today's Employee Attendance</h5>
+      <p className="admin-muted small mb-0">
+        {new Date(`${today}T00:00:00`).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric"
+        })}
+      </p>
+    </div>
 
-                  {attendanceLoading ? (
-                    <p className="admin-muted mb-0">Loading attendance records...</p>
-                  ) : attendanceError ? (
-                    <div className="alert alert-danger mb-0">{attendanceError}</div>
-                  ) : (
-                    <MaterialReactTable
-                      columns={[
-                        { accessorKey: "employeeId", header: "Employee ID" },
-                        { accessorKey: "employeeName", header: "Employee Name" },
-                        { accessorKey: "department", header: "Department" },
-                        { accessorKey: "checkIn", header: "Check-in" },
-                        { accessorKey: "checkOut", header: "Check-out" },
-                        { accessorKey: "workingHours", header: "Working Hours" },
-                        {
-  accessorKey: "status",
-  header: "Status",
-  Cell: ({ cell }) => {
-    const status = cell.getValue();
+    <button
+      type="button"
+      className="btn admin-outline-btn"
+      onClick={loadAttendanceData}
+      disabled={attendanceLoading}
+    >
+      <i className="bi bi-arrow-clockwise me-2"></i>
+      {attendanceLoading ? "Refreshing..." : "Refresh"}
+    </button>
+  </div>
 
-    return (
-      <span
-        className={`admin-attendance-status ${
-          status === "Working"
-            ? "is-working"
-            : status === "Completed"
-              ? "is-completed"
-              : status === "Unknown"
-                ? "unknown"
-                : "is-absent"
-        }`}
-      >
-        {status}
-      </span>
-    );
-  },
-}
-                      ]}
-                      data={todayRows.map(({ employee, record }) => ({
-                        id: employee.id,
-                        employeeId: employee.employeeDetails?.employeeId || employee.employeeId || employee.id,
-                        employeeName: employee.name || record?.employeeName || "--",
-                        department: employee.department || "--",
-                        checkIn: record ? formatAttendanceTime(record.checkIn, record.checkInTime) : "--",
-                        checkOut: record ? formatAttendanceTime(record.checkOut, record.checkOutTime) : "--",
-                        workingHours: record ? getWorkedDuration(record, true) : "--",
-                        status: getAttendanceStatus(record)
-                      }))}
-                      getRowId={(row) => String(row.id)}
-                      enableSorting
-                      enableColumnFilters
-                      enablePagination
-                      enableGlobalFilter={false}
-                      initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
-                      muiTablePaperProps={{
-                        className: "admin-mrt-paper",
-                        sx: {
-                          backgroundColor: "var(--navy-light)",
-                          color: "var(--white)",
-                          border: "1px solid rgba(89, 242, 254, 0.15)",
-                          borderRadius: "12px",
-                          boxShadow: "none",
-                          overflow: "hidden"
-                        }
-                      }}
-                      muiTopToolbarProps={{
-                        sx: {
-                          backgroundColor: "var(--navy-light)",
-                          color: "var(--white)",
-                          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
-                          "& .MuiInputBase-root": { color: "var(--white)" },
-                          "& .MuiFormLabel-root": { color: "var(--muted)" }
-                        }
-                      }}
-                      muiBottomToolbarProps={{
-                        sx: {
-                          backgroundColor: "var(--navy-light)",
-                          color: "var(--white)",
-                          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
-                          "& .MuiTablePagination-root, & .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { color: "var(--white)" },
-                          "& .MuiSelect-icon": { color: "var(--cyan)" }
-                        }
-                      }}
-                      muiTableHeadCellProps={{
-                        sx: {
-                          backgroundColor: "var(--navy)",
-                          color: "var(--cyan)",
-                          borderBottom: "1px solid var(--teal)",
-                          fontWeight: 700,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap"
-                        }
-                      }}
-                      muiTableBodyCellProps={{
-                        sx: {
-                          backgroundColor: "var(--navy-light)",
-                          color: "var(--white)",
-                          borderBottom: "1px solid rgba(165, 186, 200, 0.15)",
-                          fontSize: "13px",
-                          whiteSpace: "nowrap"
-                        }
-                      }}
-                      muiTableBodyRowProps={{
-                        sx: {
-                          "&:hover td": {
-                            backgroundColor: "var(--teal)",
-                            color: "var(--white)"
-                          }
-                        }
-                      }}
-                    />
-                  )}
-                </div>
+  <div className="mb-3">
+    <input
+      type="search"
+      className="form-control admin-attendance-search"
+      placeholder="Search by employee name, ID or department..."
+      value={attendanceSearch}
+      onChange={(event) => setAttendanceSearch(event.target.value)}
+    />
+  </div>
+
+  {attendanceLoading ? (
+    <p className="admin-muted mb-0">Loading attendance records...</p>
+  ) : attendanceError ? (
+    <div className="alert alert-danger mb-0">{attendanceError}</div>
+  ) : (
+    <MaterialReactTable
+      columns={[
+{
+  accessorKey: "employeeCode",
+  header: "Employee Code",
+  Cell: ({ row, cell }) => (
+    <Link
+      to={`/admin/employees/${row.original.employeeUuid}?tab=Attendance`}
+      className="employee-id-link"
+      onClick={(event) => event.stopPropagation()}
+    >
+      {cell.getValue()}
+    </Link>
+  ),
+},        { accessorKey: "employeeName", header: "Employee Name" },
+        { accessorKey: "department", header: "Department" },
+        { accessorKey: "checkIn", header: "Check-in" },
+        { accessorKey: "checkOut", header: "Check-out" },
+        { accessorKey: "workingHours", header: "Working Hours" },
+        {
+          accessorKey: "status",
+          header: "Status",
+          Cell: ({ cell }) => {
+            const status = cell.getValue();
+
+            return (
+              <span
+                className={`admin-attendance-status ${
+                  status === "Working"
+                    ? "is-working"
+                    : status === "Completed"
+                      ? "is-completed"
+                      : status === "Unknown"
+                        ? "unknown"
+                        : "is-absent"
+                }`}
+              >
+                {status}
+              </span>
+            );
+          }
+        }
+      ]}
+data={todayRows.map(({ employee, record }) => ({
+  id: employee.id,
+  employeeUuid: employee.id,
+
+  employeeCode:
+    employee.employeeDetails?.employeeId ||
+    employee.employeeDetails?.employeeCode ||
+    employee.employeeId ||
+    employee.employeeCode ||
+    employee.code ||
+    "--",
+
+  employeeName: employee.name || record?.employeeName || "--",
+  department: employee.department || "--",
+
+  checkIn: record
+    ? formatAttendanceTime(record.checkIn, record.checkInTime)
+    : "--",
+
+  checkOut: record
+    ? formatAttendanceTime(record.checkOut, record.checkOutTime)
+    : "--",
+
+  workingHours: record ? getWorkedDuration(record, true) : "--",
+  status: getAttendanceStatus(record)
+}))}
+      getRowId={(row) => String(row.id)}
+      enableSorting
+      enableColumnFilters
+      enablePagination
+      enableGlobalFilter={false}
+      initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
+      muiTablePaperProps={{
+        className: "admin-mrt-paper",
+        sx: {
+          backgroundColor: "var(--navy-light)",
+          color: "var(--white)",
+          border: "1px solid rgba(89, 242, 254, 0.15)",
+          borderRadius: "12px",
+          boxShadow: "none",
+          overflow: "hidden"
+        }
+      }}
+      muiTopToolbarProps={{
+        sx: {
+          backgroundColor: "var(--navy-light)",
+          color: "var(--white)",
+          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+          "& .MuiInputBase-root": { color: "var(--white)" },
+          "& .MuiFormLabel-root": { color: "var(--muted)" }
+        }
+      }}
+      muiBottomToolbarProps={{
+        sx: {
+          backgroundColor: "var(--navy-light)",
+          color: "var(--white)",
+          "& .MuiIconButton-root, & .MuiSvgIcon-root": { color: "var(--cyan)" },
+          "& .MuiTablePagination-root, & .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { color: "var(--white)" },
+          "& .MuiSelect-icon": { color: "var(--cyan)" }
+        }
+      }}
+      muiTableHeadCellProps={{
+        sx: {
+          backgroundColor: "var(--navy)",
+          color: "var(--cyan)",
+          borderBottom: "1px solid var(--teal)",
+          fontWeight: 700,
+          fontSize: "12px",
+          whiteSpace: "nowrap"
+        }
+      }}
+      muiTableBodyCellProps={{
+        sx: {
+          backgroundColor: "var(--navy-light)",
+          color: "var(--white)",
+          borderBottom: "1px solid rgba(165, 186, 200, 0.15)",
+          fontSize: "13px",
+          whiteSpace: "nowrap"
+        }
+      }}
+      muiTableBodyRowProps={{
+        sx: {
+          "&:hover td": {
+            backgroundColor: "var(--teal)",
+            color: "var(--white)"
+          }
+        }
+      }}
+    />
+  )}
+</div>
+
+
+{/* ==========================================
+    DAILY EMPLOYEE WORK REPORTS
+========================================== */}
+{/* 
+   <div className="admin-card p-3 p-md-4 mb-4">
+
+  <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+    <div>
+      <h5 className="fw-bold mb-1">Daily Employee Work Reports</h5>
+      <p className="admin-muted small mb-0">
+        Work reports submitted by employees.
+      </p>
+    </div>
+
+    <span className="admin-attendance-count">
+      {allAttendance.filter((record) => record.report).length} Reports
+    </span>
+  </div>
+
+  <MaterialReactTable
+    columns={[
+      {
+        accessorKey: "date",
+        header: "Date",
+        Cell: ({ cell }) => {
+          const value = cell.getValue();
+
+          return value
+            ? new Date(`${value}T00:00:00`).toLocaleDateString("en-IN")
+            : "--";
+        }
+      },
+      {
+        accessorKey: "employeeCode",
+        header: "Employee ID"
+      },
+      {
+        accessorKey: "employeeName",
+        header: "Employee Name"
+      },
+      {
+        accessorKey: "classesConducted",
+        header: "Classes Conducted"
+      },
+      {
+        accessorKey: "topicsCovered",
+        header: "Topics Covered"
+      },
+      {
+        accessorKey: "projectsWorked",
+        header: "Projects Worked"
+      },
+      {
+        accessorKey: "tasksCompleted",
+        header: "Tasks Completed"
+      },
+      {
+        accessorKey: "pendingTasks",
+        header: "Pending Tasks"
+      },
+      {
+        accessorKey: "remarks",
+        header: "Remarks"
+      }
+    ]}
+    data={allAttendance
+      .filter((record) => record.report)
+      .map((record) => {
+        const employee = employees.find((item) =>
+          attendanceBelongsToEmployee(record, item)
+        );
+
+        return {
+          id: record.id,
+          date: record.date,
+          employeeCode:
+            record.employeeCode ||
+            employee?.employeeDetails?.employeeId ||
+            employee?.employeeId ||
+            "--",
+          employeeName:
+            record.employeeName ||
+            employee?.name ||
+            "--",
+          classesConducted:
+            record.report?.classesConducted || "--",
+          topicsCovered:
+            record.report?.topicsCovered || "--",
+          projectsWorked:
+            record.report?.projectsWorked || "--",
+          tasksCompleted:
+            record.report?.tasksCompleted || "--",
+          pendingTasks:
+            record.report?.pendingTasks || "--",
+          remarks:
+            record.report?.remarks || "--"
+        };
+      })}
+    enableSorting
+    enableColumnFilters
+    enablePagination
+    enableGlobalFilter
+    initialState={{
+      pagination: {
+        pageSize: 5,
+        pageIndex: 0
+      }
+    }}
+    muiTablePaperProps={{
+      className: "admin-mrt-paper",
+      sx: {
+        backgroundColor: "var(--navy-light)",
+        color: "var(--white)",
+        border: "1px solid rgba(89, 242, 254, 0.15)",
+        borderRadius: "12px",
+        boxShadow: "none",
+        overflow: "hidden"
+      }
+    }}
+    muiTableHeadCellProps={{
+      sx: {
+        backgroundColor: "var(--navy)",
+        color: "var(--cyan)",
+        fontWeight: 700,
+        whiteSpace: "nowrap"
+      }
+    }}
+    muiTableBodyCellProps={{
+      sx: {
+        backgroundColor: "var(--navy-light)",
+        color: "var(--white)",
+        whiteSpace: "normal",
+        minWidth: "150px"
+      }
+    }}
+  />
+
+</div> */}
+
+
+
 
                 <div className="admin-card p-3 p-md-4">
                   <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
@@ -1038,14 +1445,27 @@ const handleLogout = () => {
                     <MaterialReactTable
                       columns={[
                         { accessorKey: "dateLabel", header: "Date" },
-                        { accessorKey: "employeeId", header: "Employee ID" },
-                        { accessorKey: "employeeName", header: "Employee Name" },
+{
+  accessorKey: "employeeId",
+  header: "Employee Code",
+  Cell: ({ row, cell }) => (
+    <Link
+      to={`/admin/employees/${row.original.id}?tab=Attendance`}
+      className="employee-id-link"
+    >
+      {cell.getValue()}
+    </Link>
+  ),
+},                        { accessorKey: "employeeName", header: "Employee Name" },
                         { accessorKey: "checkIn", header: "Check-in" },
 {
   accessorKey: "checkOut",
   header: "Check-out",
   Cell: ({ row }) => {
     const record = row.original;
+
+
+    
 
     return record.checkOut
       ? formatAttendanceTime(record.checkOut)
@@ -1194,8 +1614,7 @@ const handleLogout = () => {
 )}
 
 
-        </main>
-      </div>
+
     </div>
   );
 }
